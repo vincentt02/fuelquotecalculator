@@ -7,16 +7,16 @@
     align-items: center;
   }
 
-table {
+.fuelTable {
   border: 2px solid forestgreen;
   width: 800px;
   height: 200px;
 }
   
-th {
+.fuelTableth {
   border-bottom: 1px solid black;
 }
   
-td {
+.fuelTabletd {
   text-align: center;
 }
