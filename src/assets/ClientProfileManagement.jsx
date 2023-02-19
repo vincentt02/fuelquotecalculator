@@ -57,7 +57,7 @@ export default function ClientProfileManagement() {
 
   return (
     <div className='ClientProfileManagement_wrapper'> 
-        <div>Client Profile Management</div>
+        <h2>Client Profile Management</h2>
         <form className='CPM_Form'>
             <label for="fullName">Full Name:</label> <br />
             <input type="text" id="fullName" name="fullName" maxlength="50" required/> <br />
