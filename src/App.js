@@ -7,7 +7,6 @@ import FuelQuoteForm from './assets/FuelQuoteForm';
 function App() {
   return (
     <div className="App">
-      <Login />
       <FuelQuoteForm />
       
     </div>
