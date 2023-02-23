@@ -1,16 +1,14 @@
 import logo from './logo.svg';
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-
-import Login from './assets/Login';
-import FuelQuoteHistory from './assets/FuelQuoteHistory';
+import QuoteTable from './assets/QuoteTable';
 
 function App() {
   return (
+    
     <div className="App">
-      <Login />
-      <FuelQuoteHistory />
-      
+      <QuoteTable />
     </div>
   );
 }
