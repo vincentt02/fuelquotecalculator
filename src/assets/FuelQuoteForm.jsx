@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import DatePicker from "react-datepicker";
+import Form from 'react-bootstrap/Form';
 
 import "../css/FuelQuoteForm.css"
 import "react-datepicker/dist/react-datepicker.css";
-
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const FuelDate = () => {
   const [startDate, setStartDate] = useState(new Date());
@@ -22,28 +23,35 @@ export default function FuelQuoteForm() {
   }, [gallonsRequested])
 
 
-
   return (
     <div className='FuelQuoteForm_wrapper'>
       <h2>Fuel Quote Form</h2>
-      <form className='FQF_form'>
-        <label for="numGallons">Gallons Requested:</label> <br />
-        <input type="numeric" id="numGallons" name="numGallons" onChange={e => setGallonsRequested(e.target.value)} required/> <br />
+      <Form>
+        <Form.Group controlId='gallonsRequested'>
+          <Form.Label>Gallons Requested:</Form.Label>
+          <Form.Control placeholder="Enter number of gallons requested" onChange={e => setGallonsRequested(e.target.value)}/>
+        </Form.Group>
 
-        <label for="address">Delivery Address:</label> <br />
-        <textarea type="text" id="address" name="address" value="123 Main St Houston, TX 77001" required/> <br />
+        <Form.Group controlId='deliveryAddress'>
+          <Form.Label>Delivery Address:</Form.Label>
+          <Form.Control value="123 Main St Houston, TX 77001" required />
+        </Form.Group>
 
-        <label for="date">Delivery Address:</label> <br />
-        <FuelDate></FuelDate>
+        <Form.Group controlId='deliveryDate'>
+          <Form.Label>Delivery Date:</Form.Label>
+          <FuelDate></FuelDate>
+        </Form.Group>
 
-        <label for="suggestedPrice">Suggested Price/Gallon:</label> <br />
-        <input type="numeric" id="suggestedPrice" name="suggestedPrice" readonly="true" value={suggestedPrice} required/> <br />
+        <Form.Group controlId='suggestedPrice'>
+          <Form.Label>Suggested Price:</Form.Label>
+          <Form.Control placeholder="Suggested price" value={suggestedPrice}/>
+        </Form.Group>
 
-        <label for="amountDue">Total Amount Due:</label> <br />
-        <input type="numeric" id="amountDue" name="amountDue" readonly="true" value={amountDue} required/> <br />        
-
-      </form>
-
+        <Form.Group controlId='amountDue'>
+          <Form.Label>Total Amount Due:</Form.Label>
+          <Form.Control placeholder="Total due" value={amountDue} />
+        </Form.Group>
+      </Form>
     </div>
   )
 }
