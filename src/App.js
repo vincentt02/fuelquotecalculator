@@ -1,8 +1,9 @@
 import logo from './logo.svg';
 import './App.css';
 
-import Login from './assets/Login';
 import ClientProfileManagement from './assets/ClientProfileManagement';
+
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   return (
