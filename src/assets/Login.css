@@ -1,0 +1,16 @@
+.buttons {
+    /* background-color: blue; */
+    width: 50vw;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row-reverse;
+}
+
+.login_wrapper{
+    /* background-color: green; */
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
