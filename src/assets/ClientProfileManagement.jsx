@@ -61,7 +61,11 @@ export default function ClientProfileManagement() {
   return (
     <div className="ClientProfileManagement_wrapper">
       <h2>Client Profile Management</h2>
-      <Form action="/api/clientprofilemanagement" method="POST">
+      <Form
+        id="clientProfileManagement"
+        action="/api/clientprofilemanagement"
+        method="POST"
+      >
         <Form.Group className="mb-3" controlId="fullName">
           <Form.Label>Full Name:</Form.Label>
           <Form.Control
