@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import "../css/ClientProfileManagement.css";
 
 import Button from "react-bootstrap/Button";
@@ -58,56 +58,93 @@ export default function ClientProfileManagement() {
     "Wyoming",
   ];
 
+  const [formData, setFormData] = useState({fullName: "", addressOne: "", addressTwo: "", city: "", state: "Alabama", zipcode: ""});
+  
+
+  const handleInputChange = (e) => {
+    const {name, value} = e.target;
+    setFormData({...formData, [name]: value})
+  }
+
+  const submitHandler = async (e) => {
+    e.preventDefault()
+
+    try {
+      const response = await fetch("/api/clientprofilemanagement", {
+        method: "POST",
+        headers: {
+          "Content-Type" : "application/json",
+        },
+        body: JSON.stringify(formData)
+      });
+
+      if(response.ok) {
+        console.log("successful")
+      } else {
+
+      } 
+    } catch (error) {
+
+    }
+  }
+
   return (
     <div className="ClientProfileManagement_wrapper">
       <h2>Client Profile Management</h2>
       <Form
         id="clientProfileManagement"
-        action="/api/clientprofilemanagement"
-        method="POST"
+        onSubmit={submitHandler}
       >
-        <Form.Group className="mb-3" controlId="fullName">
+        <Form.Group className="mb-3" controlId="formFullName">
           <Form.Label>Full Name:</Form.Label>
           <Form.Control
             type="text"
+            name="fullName"
             placeholder="Enter full name"
+            onChange={handleInputChange}
             maxLength={50}
             required
           />
         </Form.Group>
 
-        <Form.Group className="mb-3" controlId="addressOne">
+        <Form.Group className="mb-3" controlId="formAddressOne">
           <Form.Label>Address 1:</Form.Label>
           <Form.Control
             type="text"
+            name="addressOne"
             placeholder="Enter address 1"
+            onChange={handleInputChange}
             maxLength={100}
             required
           />
         </Form.Group>
 
-        <Form.Group className="mb-3" controlId="addressTwo">
+        <Form.Group className="mb-3" controlId="formAddressTwo">
           <Form.Label>Address 2:</Form.Label>
           <Form.Control
             type="text"
+            name="addressTwo"
             placeholder="Enter address 2"
+            onChange={handleInputChange}
             maxLength={100}
           />
         </Form.Group>
 
-        <Form.Group className="mb-3" controlId="city">
+        <Form.Group className="mb-3" controlId="formCity">
           <Form.Label>City:</Form.Label>
           <Form.Control
             type="text"
+            name="city"
             placeholder="Enter city"
+            onChange={handleInputChange}
             maxLength={100}
             required
           />
         </Form.Group>
 
-        <Form.Group className="mb-3" controlId="state">
+        <Form.Group className="mb-3" controlId="formState">
           <Form.Label>State:</Form.Label>
-          <Form.Select>
+          <Form.Select name="state" onChange={handleInputChange}>
             {stateOptions.map((value) => (
               <option value={value} key={value}>
                 {value}
@@ -116,11 +153,13 @@ export default function ClientProfileManagement() {
           </Form.Select>
         </Form.Group>
 
-        <Form.Group className="mb-3" controlId="state">
+        <Form.Group className="mb-3" controlId="zipcode">
           <Form.Label>Zipcode:</Form.Label>
           <Form.Control
             type="text"
+            name="zipcode"
             placeholder="Enter zipcode"
+            onChange={handleInputChange}
             pattern="[0-9]*"
             minlength="5"
             maxlength="9"
