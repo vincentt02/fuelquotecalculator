@@ -10,12 +10,13 @@ export default function Login() {
       <Form>
       <Form.Group className="mb-3" controlId="username">
         <Form.Label>Username:</Form.Label>
-        <Form.Control type="text" placeholder="Enter Username" required/>
+        <Form.Control type="text" placeholder="Enter Username" pattern="[A-Za-z0-9!@#$%^&*]{3,100}" 
+        title="Username should not contain any spaces." id="username" required/>
       </Form.Group>
-
       <Form.Group className="mb-3" controlId="password">
         <Form.Label>Password</Form.Label>
-        <Form.Control type="password" placeholder="Enter Password" required/>
+        <Form.Control type="password" placeholder="Enter Password" pattern="[A-Za-z0-9!@#$%^&*]{3,100}" 
+        title="Password should not contain any spaces." id="password"  required/>
       </Form.Group>
       <div className="buttons">
       <Button variant="primary" type="submit">
