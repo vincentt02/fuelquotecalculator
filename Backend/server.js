@@ -5,7 +5,7 @@ const PORT = 8080;
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
-const ClientProfileManagementRoute = require("./routes/ClientProfileManagementModule");
+const ClientProfileManagementRoute = require("./routes/ClientProfileManagementRouter");
 app.use("/api/clientprofilemanagement", ClientProfileManagementRoute);
 
 app.listen(PORT, () => {
