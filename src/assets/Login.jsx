@@ -38,7 +38,10 @@ export default function Login() {
 
     return (
   <div className='login_wrapper'>
-      <Form>
+      <Form
+      id="Login"
+      onSubmit={submitHandler}
+      >
       <Form.Group className="mb-3" controlId="username">
         <Form.Label>Username:</Form.Label>
         <Form.Control 
