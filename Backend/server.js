@@ -1,8 +1,7 @@
 const express = require('express');
 //creates application variable
 const app = express();
-const PORT = 3000;
-
+const PORT = 8080;
 
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
@@ -14,5 +13,5 @@ app.use('/Register', registerRoute)
 
 //our server is listening on this port for requests
 app.listen(PORT, () => {
-    console.log('Server started on port ${PORT}');
+    console.log(`Server started on port ${PORT}`);
 });
