@@ -8,7 +8,7 @@ router.post('/', (req, res) =>{
     
     const { username, password } = req.body;
     
-    res.status(201).json({ message: 'Registration successful' });
+    res.status(201).json({ message: `Registration successful, username: ${username}, password: ${password}`});
     //res.send(`Welcome ${username}, your account was created with the password ${password}!`);
 });
 
