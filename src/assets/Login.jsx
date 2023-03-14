@@ -4,25 +4,23 @@ import Button from 'react-bootstrap/Button';
 import "../css/Login.css"
 
 
+
 export default function Login() {
 
-  const [formData, setFormData] = useState({username: "", password: ""});
+  const [formData, setFormData] = React.useState({username: "", password: ""});
   
-
   const handleInputChange = (e) => {
     const {name, value} = e.target;
     setFormData({...formData, [name]: value})
   }
 
-  const submitHandler = async (e) => {
+  const loginHandler = async (e) => {
     e.preventDefault()
 
     try {
       const response = await fetch("/Login", {
         method: "POST",
-        headers: {
-          "Content-Type" : "application/json",
-        },
+        headers: { "Content-Type" : "application/json"},
         body: JSON.stringify(formData)
       });
 
@@ -32,7 +30,7 @@ export default function Login() {
 
       } 
     } catch (error) {
-
+      console.error("Error:", error);
     }
   }
 
@@ -40,15 +38,13 @@ export default function Login() {
   <div className='login_wrapper'>
       <Form
       id="Login"
-      onSubmit={submitHandler}
+      onSubmit={loginHandler}
       >
       <Form.Group className="mb-3" controlId="username">
         <Form.Label>Username:</Form.Label>
         <Form.Control 
         type="text" 
         placeholder="Enter Username" 
-        pattern="[A-Za-z0-9!@#$%^&*]{3,100}" 
-        title="Username should not contain any spaces."
         onChange={handleInputChange} 
         required
         />
@@ -58,17 +54,19 @@ export default function Login() {
         <Form.Control 
         type="password" 
         placeholder="Enter Password" 
-        pattern="[A-Za-z0-9!@#$%^&*]{3,100}" 
-        title="Password should not contain any spaces." 
         onChange={handleInputChange}
         required
         />
       </Form.Group>
       <div className="buttons">
-      <Button variant="primary" type="submit">
+      <Button 
+      variant="primary" 
+      type="submit"
+      onClick={loginHandler}
+      >
         Login
       </Button>
-      <Button variant="danger" type="submit">
+      <Button variant="danger" type="button">
         Register
       </Button>
       </div>
