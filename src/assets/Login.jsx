@@ -6,11 +6,32 @@ import "../css/Login.css"
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [usernameError, setUsernameError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   const registerHandler = async (event) => {
     event.preventDefault(); // prevent the default form submission behavior
 
     const data = { username, password }; // create a JSON object with the username and password.
+
+    // Validate inputs
+    if (username.trim() === "") {
+      setUsernameError("Username is required.");
+      return;
+    }
+    if (username.includes(" ")) {
+      setUsernameError("Username cannot contain spaces.");
+      return;
+    }
+    if (password.trim() === "") {
+      setPasswordError("Password is required.");
+      return;
+    }
+    if (password.includes(" ")) {
+      setPasswordError("Password cannot contain spaces.");
+      return;
+    }
+
     try {
       const response = await fetch('/Register', {
         method: 'POST',
@@ -32,10 +53,12 @@ export default function Login() {
   //use state handlers to keep data entered fresh and correct
   const handleUsernameChange = (event) => {
     setUsername(event.target.value);
+    setUsernameError("");
   };
 
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
+    setPasswordError("");
   };
 
   return (
@@ -48,8 +71,12 @@ export default function Login() {
             placeholder="Enter Username"
             value={username}
             onChange={handleUsernameChange}
+            isInvalid={usernameError}
             required
           />
+          <Form.Control.Feedback type="invalid">
+            {usernameError}
+          </Form.Control.Feedback>
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="password">
@@ -59,8 +86,12 @@ export default function Login() {
             placeholder="Enter Password"
             value={password}
             onChange={handlePasswordChange}
+            isInvalid={passwordError}
             required
           />
+          <Form.Control.Feedback type="invalid">
+            {passwordError}
+          </Form.Control.Feedback>
         </Form.Group>
         <div className="buttons">
           <Button variant="primary" type="submit">
