@@ -11,10 +11,9 @@ const {
 router.get("/address", getClientData);
 
 // get suggested price
-router.get("/sugprice", getSuggestedPrice);
+router.get("/suggestedprice", getSuggestedPrice);
 
 // post gallons requested and delivery date
 router.post("/", submitFuelQuote);
 
-router.post
 module.exports = router;

@@ -13,6 +13,7 @@ function App() {
     
     <div className="App">
       <FuelQuoteForm/>
+      <QuoteTable/>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import DatePicker from "react-datepicker";
 import Form from 'react-bootstrap/Form';
+import { Button } from 'react-bootstrap';
 
 import "../css/FuelQuoteForm.css"
 import "react-datepicker/dist/react-datepicker.css";
@@ -15,13 +16,59 @@ const FuelDate = () => {
 
 export default function FuelQuoteForm() {
   const [gallonsRequested, setGallonsRequested] = useState(0)
-  const [suggestedPrice, setSuggestedPrice] = useState(5)
+  const [suggestedPrice, setSuggestedPrice] = useState(0)
   const [amountDue, setAmountDue] = useState(0)
+  const [clientAddress, setClientAddress] = useState('')
 
   useEffect (() => {
     setAmountDue(gallonsRequested * suggestedPrice)
   }, [gallonsRequested])
 
+
+  const getClientAddress = async () => {
+  try {
+    const response = await fetch("/api/fuelquote/address", {
+      method: "GET",
+      headers: {
+        "Content-Type" : "application/json",
+      }
+    });
+    if(response.ok) {
+      const data = await response.json(); // resolve the promise to get data
+      console.log("successful", data); // log the data
+      setClientAddress(data.clientAddress)
+    } else {
+      console.log("bruh")
+    } 
+  } catch (error) {
+      console.log(error.error)
+  }
+
+  }
+
+  useEffect (() => {
+    getClientAddress()
+  }, [])
+
+  const handleGetQuote = async () => {
+    try {
+      const response = await fetch("api/fuelquote/suggestedprice", {
+        method: "GET",
+        headers: {
+          "Content-Type" : "application/json",
+        }
+      })
+      if (response.ok) {
+        const data =  await response.json()
+        console.log("successful Get Quote")
+        console.log(data)
+        setSuggestedPrice(data.suggestedPrice)
+      }
+
+    } catch(error) {
+      
+    }
+  }
 
   return (
     <div className='FuelQuoteForm_wrapper'>
@@ -34,7 +81,7 @@ export default function FuelQuoteForm() {
 
         <Form.Group controlId='deliveryAddress'>
           <Form.Label>Delivery Address:</Form.Label>
-          <Form.Control value="123 Main St Houston, TX 77001" required />
+          <Form.Control value={clientAddress} required />
         </Form.Group>
 
         <Form.Group controlId='deliveryDate'>
@@ -51,7 +98,10 @@ export default function FuelQuoteForm() {
           <Form.Label>Total Amount Due:</Form.Label>
           <Form.Control placeholder="Total due" value={amountDue} />
         </Form.Group>
+
+        <Button variant='primary' onClick={handleGetQuote}>Get Quote</Button>
       </Form>
+      
     </div>
   )
 }
