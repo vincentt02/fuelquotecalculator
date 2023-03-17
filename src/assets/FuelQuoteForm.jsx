@@ -66,7 +66,7 @@ export default function FuelQuoteForm() {
       }
 
     } catch(error) {
-      
+      console.log(error.error)
     }
   }
 
