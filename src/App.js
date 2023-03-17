@@ -12,8 +12,7 @@ function App() {
   return (
     
     <div className="App">
-      <QuoteTable />
-    
+      <FuelQuoteForm/>
     </div>
   );
 }
