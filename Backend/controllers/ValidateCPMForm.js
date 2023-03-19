@@ -19,14 +19,16 @@ const formSchema = Yup.object({
 const validateCPMForm = (req, res) => {
     const formData = req.body;
     formSchema
-      .validate(formData)
+      .validate(formData, {
+        abortEarly: false
+      })
       .catch((err) => {
-        res.status(422).send();
+        res.status(422).json(err.errors)
         console.log(err.errors);
       })
       .then((valid) => {
         if (valid) {
-          res.send({ data: "Form recieved" });
+          res.send({ data: "Form received" });
           console.log("Valid Form");
           console.log(req.body);
         }
