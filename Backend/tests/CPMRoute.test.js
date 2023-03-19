@@ -168,14 +168,32 @@ describe("POST /api/clientprofilemanagement", () => {
       addressOne: "12345 Address St",
       addressTwo: "",
       city: "Houston",
-      state: "",
       zipcode: "12345",
     };
     it("should return a 422", async () => {
       const response = await supertest(app).post("/").send(invalidFormExample);
       expect(response.status).toBe(422);
       expect(response.body).toEqual([
-        "State Required",
+        "State Required"
+      ])
+    });
+  });
+
+  describe("given a form with an invalid state", () => {
+    //the form is invalid because it is missing a state
+    const invalidFormExample = {
+      fullName: "John Smith",
+      addressOne: "12345 Address St",
+      addressTwo: "",
+      city: "Houston",
+      state: "InvalidState",
+      zipcode: "12345",
+    };
+    it("should return a 422", async () => {
+      const response = await supertest(app).post("/").send(invalidFormExample);
+      expect(response.status).toBe(422);
+      expect(response.body).toEqual([
+        "Invalid State",
       ])
     });
   });

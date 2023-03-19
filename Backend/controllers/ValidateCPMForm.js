@@ -1,5 +1,58 @@
 const Yup = require("yup");
 
+const stateOptions = [
+  "Alabama",
+  "Alaska",
+  "Arizona",
+  "Arkansas",
+  "California",
+  "Colorado",
+  "Connecticut",
+  "Delaware",
+  "Florida",
+  "Georgia",
+  "Hawaii",
+  "Idaho",
+  "Illinois",
+  "Indiana",
+  "Iowa",
+  "Kansas",
+  "Kentucky",
+  "Louisiana",
+  "Maine",
+  "Maryland",
+  "Massachusetts",
+  "Michigan",
+  "Minnesota",
+  "Mississippi",
+  "Missouri",
+  "Montana",
+  "Nebraska",
+  "Nevada",
+  "New Hampshire",
+  "New Jersey",
+  "New Mexico",
+  "New York",
+  "North Carolina",
+  "North Dakota",
+  "Ohio",
+  "Oklahoma",
+  "Oregon",
+  "Pennsylvania",
+  "Rhode Island",
+  "South Carolina",
+  "South Dakota",
+  "Tennessee",
+  "Texas",
+  "Utah",
+  "Vermont",
+  "Virginia",
+  "Washington",
+  "West Virginia",
+  "Wisconsin",
+  "Wyoming",
+];
+
 const formSchema = Yup.object({
     fullName: Yup.string()
       .required("Full Name Required")
@@ -9,7 +62,7 @@ const formSchema = Yup.object({
       .max(100, "Address 1 too long"),
     addressTwo: Yup.string().max(100, "Address 2 too long"),
     city: Yup.string().required("City Required").max(100, "City too long"),
-    state: Yup.string().required("State Required"),
+    state: Yup.string().required("State Required").oneOf(stateOptions, "Invalid State"),
     zipcode: Yup.string()
       .required("Zipcode Required")
       .min(5, "Zipcode too short")
