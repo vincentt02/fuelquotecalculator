@@ -1,18 +1,29 @@
 import React, { useState, useEffect } from "react";
+import { Button } from "react-bootstrap";
+import { format } from 'date-fns';
 import DatePicker from "react-datepicker";
 import Form from "react-bootstrap/Form";
-import { Button } from "react-bootstrap";
-
 import "../css/FuelQuoteForm.css";
 import "react-datepicker/dist/react-datepicker.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const FuelDate = () => {
   const [startDate, setStartDate] = useState(new Date());
+  const [formattedDate, setFormattedDate] = useState('');
+
+  const handleDateChange = (date) => {
+    setStartDate(date);
+    const formatted = format(date, 'MM/dd/yyyy');
+    setFormattedDate(formatted);
+  };
+  
   return (
-    <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} />
+    <div>
+      <DatePicker selected={startDate} onChange={handleDateChange} />
+    </div>
   );
 };
+
 
 export default function FuelQuoteForm() {
   const [gallonsRequested, setGallonsRequested] = useState(0);
@@ -21,30 +32,24 @@ export default function FuelQuoteForm() {
   const [clientAddress, setClientAddress] = useState("");
 
   useEffect(() => {
-    setAmountDue(gallonsRequested * suggestedPrice);
-  }, [gallonsRequested]);
-
-  const getClientAddress = async () => {
-    try {
-      const response = await fetch("/api/fuelquote/address", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (response.ok) {
-        const data = await response.json(); // resolve the promise to get data
-        console.log("successful", data); // log the data
-        setClientAddress(data.clientAddress);
-      } else {
-        console.log("bruh");
+    const getClientAddress = async () => {
+      try {
+        const response = await fetch("/api/fuelquote/clientdata", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setClientAddress(data.clientAddress);
+        } else {
+          console.log("bruh");
+        }
+      } catch (error) {
+        console.log(error.error);
       }
-    } catch (error) {
-      console.log(error.error);
-    }
-  };
-
-  useEffect(() => {
+    };
     getClientAddress();
   }, []);
 
@@ -61,6 +66,7 @@ export default function FuelQuoteForm() {
         console.log("successful Get Quote");
         console.log(data);
         setSuggestedPrice(data.suggestedPrice);
+        setAmountDue(gallonsRequested * data.suggestedPrice);
       }
     } catch (error) {
       console.log(error.error);
@@ -81,22 +87,22 @@ export default function FuelQuoteForm() {
 
         <Form.Group controlId="deliveryAddress">
           <Form.Label>Delivery Address:</Form.Label>
-          <Form.Control value={clientAddress} required />
+          <Form.Control value={clientAddress} required readOnly/>
         </Form.Group>
 
         <Form.Group controlId="deliveryDate">
           <Form.Label>Delivery Date:</Form.Label>
-          <FuelDate></FuelDate>
+          <FuelDate />
         </Form.Group>
 
         <Form.Group controlId="suggestedPrice">
           <Form.Label>Suggested Price:</Form.Label>
-          <Form.Control placeholder="Suggested price" value={suggestedPrice} />
+          <Form.Control placeholder="Suggested price" value={suggestedPrice} readOnly/>
         </Form.Group>
 
         <Form.Group controlId="amountDue">
           <Form.Label>Total Amount Due:</Form.Label>
-          <Form.Control placeholder="Total due" value={amountDue} />
+          <Form.Control placeholder="Total due" value={amountDue} readOnly/>
         </Form.Group>
 
         <Button variant="primary" onClick={handleGetQuote}>

@@ -2,19 +2,24 @@ const Yup = require("yup");
 
 // date still needs some work i cant get the validation right
 const fuelQuoteSchema = Yup.object({
-  gallonsRequested: Yup.number().required("Gallons requested required"),
+  gallonsRequested: Yup.number()
+    .typeError("gallonsRequested must be a number")
+    .required("Gallons requested required")
+    .min(1, "Gallons requested must be greater than 0"),
   dateRequested: Yup.string()
     .required("Delivery Date Required")
     .test(
       "valid-date",
-      "Invalid date format, please use MM-DD-YYYY",
+      "Invalid date format, please use MM/DD/YYYY",
       function (value) {
-        const regex = /^\d{2}-\d{2}-\d{4}$/;
+        const regex =
+          /^(0?[1-9]|1[012])[- \/.](0?[1-9]|[12][0-9]|3[01])[- \/.](19|20)\d\d$/;
+
         if (!regex.test(value)) {
           return false;
         }
-        const [month, day, year] = value.split("-");
-        const date = new Date(`${month}-${day}-${year}`);
+        const [month, day, year] = value.split("/");
+        const date = new Date(`${month}/${day}/${year}`);
         return date instanceof Date && !isNaN(date);
       }
     ),
@@ -38,15 +43,17 @@ const submitFuelQuote = (req, res) => {
   const fuelQuote = req.body;
 
   fuelQuoteSchema
-    .validate(fuelQuote)
-    .catch((err) => {
-      console.log(err.errors);
-      res.status(422).send();
+    .validate(fuelQuote, {
+      abortEarly: false
     })
     .then((valid) => {
       res.status(200).send({ data: "form received" });
       console.log("Valid Form");
       console.log(req.body);
+    })
+    .catch((err) => {
+      console.log(err.errors);
+      res.status(422).send(err.errors);
     });
 };
 

@@ -6,30 +6,29 @@ export default function QuoteTable() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const getQuoteData = async () => {
-    try {
-      const response = await fetch("/api/quotetable/quotedata", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (response.ok) {
-        const data = await response.json(); // resolve the promise to get data
-        setQuoteData(data);
-        setLoading(false);
-        console.log("successful", data); // log the data
-      } else {
-        setError("Error retrieving quote data");
+  useEffect(() => {
+    const getQuoteData = async () => {
+      try {
+        const response = await fetch("/api/quotetable/quotedata", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (response.ok) {
+          const data = await response.json(); // resolve the promise to get data
+          setQuoteData(data);
+          setLoading(false);
+          console.log("successful", data); // log the data
+        } else {
+          setError("Error retrieving quote data");
+          setLoading(false);
+        }
+      } catch (error) {
+        setError(error.message);
         setLoading(false);
       }
-    } catch (error) {
-      setError(error.message);
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
+    };
     getQuoteData();
   }, []);
 
