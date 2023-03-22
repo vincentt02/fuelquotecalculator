@@ -97,4 +97,17 @@ describe("GET /api/fuel", () => {
     });
   });
 
+  describe("gets quote data for the table", () => {
+
+    it("should receive 200 along with valid quotes", async () => {
+      const response = await supertest(app).get("/quotetable/quotedata");
+      expect(response.status).toBe(200);
+      response.body.forEach(quote => {
+        expect(quote).toEqual(expect.objectContaining({ numG: expect.any(Number), address: expect.any(String), date: expect.any(String), price: expect.any(Number), due: expect.any(Number)}))
+      })
+    });
+  });
+
+
+
 });

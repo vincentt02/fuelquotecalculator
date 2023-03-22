@@ -35,7 +35,7 @@ const getClientData = async (req, res) => {
 const getSuggestedPrice = async (req, res) => {
   // i'll assume this will be completed in the backend,database
   // and i'll be able to also just extract from db
-  res.status(200).json({ suggestedPrice: "1.50" });
+  res.status(200).json({ suggestedPrice: 1.50 });
   console.log("Suggested Price Calculated!");
 };
 

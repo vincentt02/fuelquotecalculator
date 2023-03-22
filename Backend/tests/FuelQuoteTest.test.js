@@ -21,6 +21,24 @@ describe("POST /api/fuelquote", () => {
     });
   });
 
+  describe("gets the client address", () => {
+    it("should return a 200 along with a suggested price", async () => {
+      const response = await supertest(app).get("/fuelquote/clientdata");
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({ clientAddress: expect.any(String)})
+    });
+  });
+
+  describe("gets the suggested price", () => {
+    it("should return a 200 along with a suggested price", async () => {
+      const response = await supertest(app).get("/fuelquote/suggestedprice");
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({ suggestedPrice: expect.any(Number)})
+    });
+  });
+
+ 
+
   describe("given an invalid form with missing dateRequested", () => {
     const req = {
       gallonsRequested: 100,
