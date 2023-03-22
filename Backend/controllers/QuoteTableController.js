@@ -119,11 +119,13 @@ const filterValidQuotes = async (quotes) => {
   }
   return validQuotes;
 };
-
 const getQuoteData = async (req, res) => {
   const validQuotes = await filterValidQuotes(quoteHistoryArray);
   res.status(200).json(validQuotes);
   console.log("Valid quotes extracted!");
 };
 
-module.exports = { getQuoteData };
+module.exports = {
+  getQuoteData,
+  quoteTableSchema,
+};

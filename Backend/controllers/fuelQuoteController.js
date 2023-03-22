@@ -44,7 +44,7 @@ const submitFuelQuote = (req, res) => {
 
   fuelQuoteSchema
     .validate(fuelQuote, {
-      abortEarly: false
+      abortEarly: false,
     })
     .then((valid) => {
       res.status(200).send({ data: "form received" });
@@ -61,4 +61,5 @@ module.exports = {
   getClientData,
   getSuggestedPrice,
   submitFuelQuote,
+  fuelQuoteSchema,
 };
