@@ -8,13 +8,12 @@ const {
 } = require('../controllers/fuelQuoteController')
 
 // get client address for FQF
-router.get("/address", getClientData);
+router.get("/fuelquote/clientdata", getClientData);
 
 // get suggested price
-router.get("/sugprice", getSuggestedPrice);
+router.get("/fuelquote/suggestedprice", getSuggestedPrice);
 
 // post gallons requested and delivery date
-router.post("/", submitFuelQuote);
+router.post("/fuelquote", submitFuelQuote);
 
-router.post
 module.exports = router;
