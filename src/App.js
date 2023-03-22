@@ -10,7 +10,9 @@ import QuoteTable from "./assets/QuoteTable";
 function App() {
   return (
     <div className="App">
-      <ClientProfileManagement />
+      <QuoteTable/>
+      <FuelQuoteForm/>
+      {/* <ClientProfileManagement /> */}
     </div>
   );
 }
