@@ -1,15 +1,46 @@
-import Table from 'react-bootstrap/Table';
-import { useEffect } from 'react';
+import Table from "react-bootstrap/Table";
+import React, { useState, useEffect } from "react";
 
-const data = [
-  {numG: 20, address: "2701 Helena st", date: "05/16/2001", price: 2.14, due: 42.8},
-  {numG: 456, address: "3552 travis St", date: "02/10/2001", price: 3.24, due: 1477.4}
-]
+export default function QuoteTable() {
+  const [quoteData, setQuoteData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  useEffect(() => {
+    const getQuoteData = async () => {
+      try {
+        const response = await fetch("/api/quotetable/quotedata", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (response.ok) {
+          const data = await response.json(); // resolve the promise to get data
+          setQuoteData(data);
+          setLoading(false);
+          console.log("successful", data); // log the data
+        } else {
+          setError("Error retrieving quote data");
+          setLoading(false);
+        }
+      } catch (error) {
+        setError(error.message);
+        setLoading(false);
+      }
+    };
+    getQuoteData();
+  }, []);
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
-function QuoteTable() {
-  return ( 
+  if (error) {
+    return <div>{error}</div>;
+  }
+
+  return (
     <Table striped bordered hover>
       <thead>
         <tr>
@@ -22,21 +53,19 @@ function QuoteTable() {
         </tr>
       </thead>
       <tbody>
-      {data.map((val, key) => {
+        {quoteData.map((quote, index) => {
           return (
-            <tr key={key}>
-              <td>{key+1}</td>
-              <td>{val.numG}</td>
-              <td>{val.address}</td>
-              <td>{val.date}</td>
-              <td>${val.price}</td>
-              <td>${val.due}</td>
+            <tr key={index}>
+              <td>{index + 1}</td>
+              <td>{quote.numG}</td>
+              <td>{quote.address}</td>
+              <td>{quote.date}</td>
+              <td>${quote.price}</td>
+              <td>${quote.due}</td>
             </tr>
-          )
+          );
         })}
       </tbody>
     </Table>
   );
 }
-
-export default QuoteTable;

@@ -3,11 +3,57 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import "../css/Login.css"
 
+
 export default function Login() {
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+
+  
+  const loginHandler = async (event) => {
+    event.preventDefault(); // prevent the default form submission behavior
+
+    const data = { username, password }; // create a JSON object with the username and password.
+
+    // Validate inputs
+    if (username.trim() === "") {
+      setUsernameError("Username is required.");
+      return;
+    }
+    if (username.includes(" ")) {
+      setUsernameError("Username cannot contain spaces.");
+      return;
+    }
+    if (password.trim() === "") {
+      setPasswordError("Password is required.");
+      return;
+    }
+    if (password.includes(" ")) {
+      setPasswordError("Password cannot contain spaces.");
+      return;
+    }
+
+    try {
+      const response = await fetch('/Login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const responseData = await response.json();
+      console.log(responseData); // log the response data to the console in the browser.
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  
 
   const registerHandler = async (event) => {
     event.preventDefault(); // prevent the default form submission behavior
@@ -94,10 +140,17 @@ export default function Login() {
           </Form.Control.Feedback>
         </Form.Group>
         <div className="buttons">
-          <Button variant="primary" type="submit">
-            Login
-          </Button>
-          <Button
+         
+         
+
+          <Button 
+      variant="primary" 
+      type="submit"
+      onClick={loginHandler}
+      >
+        Login
+      </Button>
+      <Button
             variant="danger"
             type="button"
             onClick={registerHandler}
