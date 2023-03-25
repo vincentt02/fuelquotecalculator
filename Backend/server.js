@@ -11,7 +11,7 @@ const LoginModuleRoute = require("./routes/LoginModule")
 const registerRoute = require('./routes/Register')
 
 //connect to the database
-mongoose.connect(process.env.DATABASE_URI);
+mongoose.connect(process.env.DATABASE_URI).catch(error => console.log(error));
 
 //creates application variable
 const app = express();
