@@ -11,9 +11,9 @@ function App() {
   return (
     <div className="App">
       {/* <QuoteTable/>
-      <FuelQuoteForm/> */}
-      {/* <ClientProfileManagement /> */}
-      <Login />
+      <FuelQuoteForm/>  */}
+      <ClientProfileManagement />
+      {/* <Login /> */}
     </div>
   );
 }

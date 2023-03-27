@@ -1,5 +1,8 @@
 const Yup = require("yup");
 
+// const mongoose = require("mongoose")
+const { CPMForm } = require('../models/CPMFormModel.js')
+
 const stateOptions = [
   "Alabama",
   "Alaska",
@@ -69,6 +72,14 @@ const formSchema = Yup.object({
       .max(9, "Zipcode too long"),
   });
 
+const validFormHandler = async (req, res) => {
+  console.log(req.body)
+  const newCPMForm = new CPMForm({...req.body})
+  const insertedForm = await newCPMForm.save();;
+  return res.status(201).json(insertedForm)
+
+}
+
 const validateCPMForm = (req, res) => {
     const formData = req.body;
     formSchema
@@ -81,9 +92,10 @@ const validateCPMForm = (req, res) => {
       })
       .then((valid) => {
         if (valid) {
-          res.send({ data: "Form received" });
+          // res.send({ data: "Form received" });
           console.log("Valid Form");
-          console.log(req.body);
+          // console.log(req.body);
+          validFormHandler(req, res) 
         }
       });
 }
