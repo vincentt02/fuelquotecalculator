@@ -9,12 +9,12 @@ const register = (req, res, next) => {
                 error:err
             })
         }
-        let login = new Login ({
+        let user = new Login ({
             username: req.body.username,
             password: hashedPass
         })
-        login.save()
-        .then(login => {
+        user.save()
+        .then(user => {
             res.json({
                 message: 'User Registered Successfully!'
             })
