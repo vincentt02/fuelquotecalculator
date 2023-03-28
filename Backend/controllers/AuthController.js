@@ -2,6 +2,34 @@ const Login = require('../models/Login_register')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
+
+const validate = (req, res, next) => {
+
+    const { username, password } = req.body;
+    //array for all error messages that exist.
+    const errors = [];
+  
+    // backend validations
+    if (!username.trim()) {
+      errors.push('Username is required.');
+    }
+    if (username.includes(' ')) {
+      errors.push('Username cannot contain spaces.');
+    }
+    if (!password.trim()) {
+      errors.push('Password is required.');
+    }
+    if (password.includes(' ')) {
+      errors.push('Password cannot contain spaces.');
+    }
+  
+    if (errors.length > 0) {
+      res.status(400).json({ errors });
+    } else {
+      next();
+    }
+  }
+
 const register = (req, res, next) => {
     bcrypt.hash(req.body.password, 10, function(err, hashedPass) {
         if(err) {
@@ -41,5 +69,6 @@ const register = (req, res, next) => {
 }
 
 module.exports = {
-    register
+    register,
+    validate
 }
