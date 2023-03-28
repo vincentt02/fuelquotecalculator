@@ -10,7 +10,7 @@ const register = (req, res, next) => {
             })
         }
         let login = new Login ({
-            username: req.body.name,
+            username: req.body.username,
             password: hashedPass
         })
         login.save()
