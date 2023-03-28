@@ -9,19 +9,32 @@ const register = (req, res, next) => {
                 error:err
             })
         }
-        let user = new Login ({
-            username: req.body.username,
-            password: hashedPass
-        })
-        user.save()
-        .then(user => {
-            res.json({
-                message: 'User Registered Successfully!'
+        Login.findOne({ username: req.body.username })
+        .then(existingUser => {
+            if (existingUser) {
+                return res.json({
+                    message: 'Username already exists. Please choose a different one.'
+                })
+            }
+            let user = new Login ({
+                username: req.body.username,
+                password: hashedPass
+            })
+            user.save()
+            .then(user => {
+                res.json({
+                    message: 'User Registered Successfully!'
+                })
+            })
+            .catch(error => {
+                res.json({
+                    message: 'An error has occurred.'
+                })
             })
         })
         .catch(error => {
             res.json({
-                message: 'An error has occured.'
+                message: 'An error has occurred.'
             })
         })
     })
