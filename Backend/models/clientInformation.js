@@ -25,6 +25,10 @@ const clientInformationSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    userID: {
+        type: String,
+        required: true,
+    }
 })
 
 const clientInformation = mongoose.model("clientinformation", clientInformationSchema);
