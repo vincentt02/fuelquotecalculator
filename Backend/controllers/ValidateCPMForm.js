@@ -1,7 +1,8 @@
 const Yup = require("yup");
 
 // const mongoose = require("mongoose")
-const { CPMForm } = require('../models/CPMFormModel.js')
+
+const { clientInformation } = require('../models/clientInformation.js')
 
 const stateOptions = [
   "Alabama",
@@ -74,8 +75,8 @@ const formSchema = Yup.object({
 
 const validFormHandler = async (req, res) => {
   console.log(req.body)
-  const newCPMForm = new CPMForm({...req.body})
-  const insertedForm = await newCPMForm.save();;
+  const newClientInformation = new clientInformation({...req.body})
+  const insertedForm = await newClientInformation.save();;
   return res.status(201).json(insertedForm)
 
 }
