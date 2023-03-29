@@ -108,57 +108,58 @@ export default function Login() {
   };
 
   return (
-    <div className='login_wrapper'>
-      <Form>
-        <Form.Group className="mb-3" controlId="username">
-          <Form.Label>Username:</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Enter Username"
-            value={username}
-            onChange={handleUsernameChange}
-            isInvalid={usernameError}
-            required
-          />
-          <Form.Control.Feedback type="invalid">
-            {usernameError}
-          </Form.Control.Feedback>
-        </Form.Group>
+    <div className='login_container'>  <div className='loginForm_wrapper'>
+    <Form>
+      <Form.Group className="mb-3" controlId="username">
+        <Form.Label>Username:</Form.Label>
+        <Form.Control
+          type="text"
+          placeholder="Enter Username"
+          value={username}
+          onChange={handleUsernameChange}
+          isInvalid={usernameError}
+          required
+        />
+        <Form.Control.Feedback type="invalid">
+          {usernameError}
+        </Form.Control.Feedback>
+      </Form.Group>
 
-        <Form.Group className="mb-3" controlId="password">
-          <Form.Label>Password</Form.Label>
-          <Form.Control
-            type="password"
-            placeholder="Enter Password"
-            value={password}
-            onChange={handlePasswordChange}
-            isInvalid={passwordError}
-            required
-          />
-          <Form.Control.Feedback type="invalid">
-            {passwordError}
-          </Form.Control.Feedback>
-        </Form.Group>
-        <div className="buttons">
-         
-         
+      <Form.Group className="mb-3" controlId="password">
+        <Form.Label>Password</Form.Label>
+        <Form.Control
+          type="password"
+          placeholder="Enter Password"
+          value={password}
+          onChange={handlePasswordChange}
+          isInvalid={passwordError}
+          required
+        />
+        <Form.Control.Feedback type="invalid">
+          {passwordError}
+        </Form.Control.Feedback>
+      </Form.Group>
+      <div className="buttons">
+       
+       
 
-          <Button 
-      variant="primary" 
-      type="submit"
-      onClick={loginHandler}
-      >
-        Login
-      </Button>
-      <Button
-            variant="danger"
-            type="button"
-            onClick={registerHandler}
-          >
-            Register
-          </Button>
-        </div>
-      </Form>
-    </div>
+        <Button 
+    variant="primary" 
+    type="submit"
+    onClick={loginHandler}
+    >
+      Login
+    </Button>
+    <Button
+          variant="danger"
+          type="button"
+          onClick={registerHandler}
+        >
+          Register
+        </Button>
+      </div>
+    </Form>
+  </div></div>
+  
   );
 }
