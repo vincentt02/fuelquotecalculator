@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import Alert from 'react-bootstrap/Alert';
 import "../css/Login.css"
 
 
@@ -10,6 +11,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
 
   
   const loginHandler = async (event) => {
@@ -86,6 +88,7 @@ export default function Login() {
       });
 
       if (!response.ok) {
+        setShowAlert(true);
         throw new Error('Network response was not ok');
       }
 
@@ -109,6 +112,19 @@ export default function Login() {
 
   return (
     <div className='login_wrapper'>
+       {showAlert && 
+        <Alert 
+        variant="danger" 
+        onClose={() => setShowAlert(false)}
+        dismissible
+        style={{position: "fixed", bottom: "275px", left: "50%", transform: "translateX(-50%)"}}
+        >
+          <Alert.Heading>Username already exists!</Alert.Heading>
+          <p>
+            Please try a different username.
+          </p>
+        </Alert>
+      }
       <Form>
         <Form.Group className="mb-3" controlId="username">
           <Form.Label>Username:</Form.Label>

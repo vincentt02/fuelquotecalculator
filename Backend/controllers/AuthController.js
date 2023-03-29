@@ -40,7 +40,7 @@ const register = (req, res, next) => {
         Login.findOne({ username: req.body.username })
         .then(existingUser => {
             if (existingUser) {
-                return res.json({
+                return res.status(400).json({
                     message: 'Username already exists. Please choose a different one.'
                 })
             }
