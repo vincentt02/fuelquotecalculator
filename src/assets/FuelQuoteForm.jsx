@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
-import { format } from 'date-fns';
+import { format } from "date-fns";
 import DatePicker from "react-datepicker";
 import Form from "react-bootstrap/Form";
 import "../css/FuelQuoteForm.css";
@@ -8,15 +8,14 @@ import "react-datepicker/dist/react-datepicker.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const FuelDate = () => {
+  const setDateRequested = useRef(null);
   const [startDate, setStartDate] = useState(new Date());
-  const [formattedDate, setFormattedDate] = useState('');
 
   const handleDateChange = (date) => {
     setStartDate(date);
-    const formatted = format(date, 'MM/dd/yyyy');
-    setFormattedDate(formatted);
+    const formatted = format(date, "MM/dd/yyyy");
   };
-  
+
   return (
     <div>
       <DatePicker selected={startDate} onChange={handleDateChange} />
@@ -24,9 +23,9 @@ const FuelDate = () => {
   );
 };
 
-
 export default function FuelQuoteForm() {
   const [gallonsRequested, setGallonsRequested] = useState(0);
+  const [dateRequested, setDateRequested] = useState(0);
   const [suggestedPrice, setSuggestedPrice] = useState(0);
   const [amountDue, setAmountDue] = useState(0);
   const [clientAddress, setClientAddress] = useState("");
@@ -54,6 +53,7 @@ export default function FuelQuoteForm() {
   }, []);
 
   const handleGetQuote = async () => {
+    // retrieve and display
     try {
       const response = await fetch("api/fuelquote/suggestedprice", {
         method: "GET",
@@ -87,7 +87,7 @@ export default function FuelQuoteForm() {
 
         <Form.Group controlId="deliveryAddress">
           <Form.Label>Delivery Address:</Form.Label>
-          <Form.Control value={clientAddress} required readOnly/>
+          <Form.Control value={clientAddress} required readOnly />
         </Form.Group>
 
         <Form.Group controlId="deliveryDate">
@@ -97,12 +97,16 @@ export default function FuelQuoteForm() {
 
         <Form.Group controlId="suggestedPrice">
           <Form.Label>Suggested Price:</Form.Label>
-          <Form.Control placeholder="Suggested price" value={suggestedPrice} readOnly/>
+          <Form.Control
+            placeholder="Suggested price"
+            value={suggestedPrice}
+            readOnly
+          />
         </Form.Group>
 
         <Form.Group controlId="amountDue">
           <Form.Label>Total Amount Due:</Form.Label>
-          <Form.Control placeholder="Total due" value={amountDue} readOnly/>
+          <Form.Control placeholder="Total due" value={amountDue} readOnly />
         </Form.Group>
 
         <Button variant="primary" onClick={handleGetQuote}>
