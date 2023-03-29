@@ -22,7 +22,12 @@ const QuoteTableSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
+    userID: {
+        type: String,
+        required: true,
+    }
 
 }, { timestamps: true })
+
 
 module.exports = mongoose.model('QuoteHistoryModel', QuoteTableSchema)

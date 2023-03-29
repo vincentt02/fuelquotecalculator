@@ -8,7 +8,6 @@ import "react-datepicker/dist/react-datepicker.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const FuelDate = () => {
-  const setDateRequested = useRef(null);
   const [startDate, setStartDate] = useState(new Date());
 
   const handleDateChange = (date) => {

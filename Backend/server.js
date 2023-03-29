@@ -15,7 +15,7 @@ mongoose.connect(process.env.DATABASE_URI).catch(error => console.log(error));
 
 //creates application variable
 const app = express();
-const PORT = process.env.PORT;
+const PORT = 8080;
 
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));

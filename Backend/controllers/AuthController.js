@@ -2,6 +2,7 @@ const Login = require('../models/Login_register')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
+var object_id = "6422725c414939ca346217a1"
 
 const validate = (req, res, next) => {
 
@@ -55,7 +56,7 @@ const register = (req, res, next) => {
                     id: user._id // Return the _id value of the saved user document
 
                 })
-                const ubject_id = user._id;
+                object_id = user._id;
 
             })
             .catch(error => {
