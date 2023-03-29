@@ -1,4 +1,3 @@
-import logo from "./logo.svg";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -10,10 +9,10 @@ import QuoteTable from "./assets/QuoteTable";
 function App() {
   return (
     <div className="App">
-      {/* <QuoteTable/>
-      <FuelQuoteForm/> */}
-      {/* <ClientProfileManagement /> */}
-      <Login />
+      <QuoteTable />
+      <FuelQuoteForm />
+      
+      
     </div>
   );
 }
