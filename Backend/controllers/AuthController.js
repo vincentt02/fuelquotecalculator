@@ -51,8 +51,12 @@ const register = (req, res, next) => {
             user.save()
             .then(user => {
                 res.json({
-                    message: 'User Registered Successfully!'
+                    message: 'User Registered Successfully!',
+                    id: user._id // Return the _id value of the saved user document
+
                 })
+                const ubject_id = user._id;
+
             })
             .catch(error => {
                 res.json({
@@ -70,5 +74,6 @@ const register = (req, res, next) => {
 
 module.exports = {
     register,
-    validate
+    validate,
+    object_id
 }
