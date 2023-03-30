@@ -76,12 +76,23 @@ const formSchema = Yup.object({
 const validFormHandler = async (req, res) => {
   console.log(req.body)
   const decoded = jwt.decode(req.body.token)
-  const newClientInformation = new clientInformation({
-    ...req.body,
-    userID: decoded.userId
-  });
+  // const newClientInformation = new clientInformation({
+  //   ...req.body,
+  //   userID: decoded.userId
+  // });
+  const query = {userID: decoded.userId};
   // console.log(newClientInformation)
-  const insertedForm = await newClientInformation.save();;
+  const insertedForm = await clientInformation.findOneAndUpdate(query, {...req.body,
+    userID: decoded.userId}, 
+    {
+    new: true,
+    upsert: true
+  })
+  // clientInformation.findOneAndUpdate(query, newClientInformation, {upsert: true}, function (err, doc) {
+  //   if(err) return res.send(500, {error: err});
+  //   return res.status(201).send('Succesfully saved')
+  // })
+  // const insertedForm = await newClientInformation.save();;
   return res.status(201).json(insertedForm)
 
 }

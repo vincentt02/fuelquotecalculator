@@ -52,7 +52,7 @@ export default function Login() {
       }
 
       const responseData = await response.json();
-      // console.log(responseData); // log the response data to the console in the browser.
+      console.log(responseData); // log the response data to the console in the browser.
       token = responseData.token;
       navigate("/");
     } catch (error) {
@@ -98,7 +98,7 @@ export default function Login() {
       }
 
       const responseData = await response.json();
-      // console.log(responseData); // log the response data to the console in the browser.
+      console.log(responseData); // log the response data to the console in the browser.
       token = responseData.token;
       navigate("/");
     } catch (error) {
