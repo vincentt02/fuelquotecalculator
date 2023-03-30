@@ -1,25 +1,9 @@
 const express = require("express");
 const router = express.Router()
 
-router.post("/", (req, res) => {
-    console.log("Running Login Post Route");
+const AuthController = require ('../controllers/AuthController')
+router.use(express.json());
 
-    const {username, password } = req.body;
-
-    const errors = [];
-
-    if (!username.trim()) {
-        errors.push('Username is required.');
-    }
-      if (!password.trim()) {
-        errors.push('Password is required.');
-      }
-
-      if(errors.length > 0){
-        res.status(400).json({ errors });
-      } else {
-        res.status(201).json({ message: `Login successful`})
-      }
-});
+router.post('/', AuthController.validate, AuthController.login)
 
 module.exports = router;

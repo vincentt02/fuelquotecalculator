@@ -4,9 +4,12 @@ import Button from 'react-bootstrap/Button';
 import Alert from 'react-bootstrap/Alert';
 import "../css/Login.css"
 
+export var token = null
 
 
 export default function Login() {
+
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [usernameError, setUsernameError] = useState("");
@@ -49,7 +52,8 @@ export default function Login() {
       }
 
       const responseData = await response.json();
-      console.log(responseData); // log the response data to the console in the browser.
+      // console.log(responseData); // log the response data to the console in the browser.
+      token = responseData.token;
     } catch (error) {
       console.error('Error:', error);
     }
