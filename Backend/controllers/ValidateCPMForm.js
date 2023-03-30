@@ -1,6 +1,5 @@
 const Yup = require("yup");
-
-// const mongoose = require("mongoose")
+const jwt = require('jsonwebtoken')
 
 const { clientInformation } = require('../models/clientInformation.js')
 
@@ -71,11 +70,17 @@ const formSchema = Yup.object({
       .required("Zipcode Required")
       .min(5, "Zipcode too short")
       .max(9, "Zipcode too long"),
+    token: Yup.string().required("Missing Token")
   });
 
 const validFormHandler = async (req, res) => {
   console.log(req.body)
-  const newClientInformation = new clientInformation({...req.body})
+  const decoded = jwt.decode(req.body.token)
+  const newClientInformation = new clientInformation({
+    ...req.body,
+    userID: decoded.userId
+  });
+  // console.log(newClientInformation)
   const insertedForm = await newClientInformation.save();;
   return res.status(201).json(insertedForm)
 

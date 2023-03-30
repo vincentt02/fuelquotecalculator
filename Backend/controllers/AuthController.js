@@ -2,8 +2,6 @@ const Login = require('../models/Login_register')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
-let object_id = null;
-
 const validate = (req, res, next) => {
 
     const { username, password } = req.body;
@@ -49,12 +47,17 @@ const register = (req, res, next) => {
             })
             user.save()
             .then(user => {
-                res.json({
-                    message: 'User Registered Successfully!',
-                    id: user._id
-                })
-                object_id = user._id;
-            })
+                const token = jwt.sign(
+                  {
+                    username: user.username,
+                    userId: user._id
+                  },
+                  process.env.JWT_KEY, //must include in env file in current environment
+                  { expiresIn: '1h' }
+                );
+    
+                return res.status(200).json({ message: 'User Registered Successfully.', token: token });
+              })
             .catch(error => {
                 res.json({
                     message: 'An error has occurred.'
@@ -96,8 +99,7 @@ const login = (req, res, next) => {
               { expiresIn: '1h' }
             );
 
-            object_id = existingUser._id;
-            return res.status(200).json({ message: 'Authentication successful.', token: token, id: existingUser._id });
+            return res.status(200).json({ message: 'Authentication successful.', token: token });
           }
   
           // If the password is incorrect, send an error response
@@ -114,6 +116,5 @@ const login = (req, res, next) => {
 module.exports = {
     register,
     login,
-    validate,
-    object_id
+    validate
 }

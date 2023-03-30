@@ -3,19 +3,19 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Alert from 'react-bootstrap/Alert';
 import "../css/Login.css"
+import { useNavigate } from "react-router-dom"
 
 export var token = null
 
 
 export default function Login() {
-
-
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [showAlert, setShowAlert] = useState(false);
 
+  const navigate = useNavigate();
   
   const loginHandler = async (event) => {
     event.preventDefault(); // prevent the default form submission behavior
@@ -54,6 +54,7 @@ export default function Login() {
       const responseData = await response.json();
       // console.log(responseData); // log the response data to the console in the browser.
       token = responseData.token;
+      navigate("/");
     } catch (error) {
       console.error('Error:', error);
     }
@@ -97,7 +98,9 @@ export default function Login() {
       }
 
       const responseData = await response.json();
-      console.log(responseData); // log the response data to the console in the browser.
+      // console.log(responseData); // log the response data to the console in the browser.
+      token = responseData.token;
+      navigate("/");
     } catch (error) {
       console.error('Error:', error);
     }
