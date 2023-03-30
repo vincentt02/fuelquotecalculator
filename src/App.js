@@ -11,14 +11,14 @@ import Homepage from "./assets/Homepage";
 
 import { Routes, Route, Navigate } from "react-router";
 import ProtectedRoutes from "./assets/ProtectedRoutes";
-import NavigationBar from "./assets/NavigationBar";
+import Navigation from "./assets/Navigation";
 
 
 
 function App() {
   return (
     <div className="App">
-      <NavigationBar />
+      <Navigation />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route element={<ProtectedRoutes />}>
