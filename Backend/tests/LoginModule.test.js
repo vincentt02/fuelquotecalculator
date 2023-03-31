@@ -70,10 +70,10 @@ describe ('POST /', () => {
   it("should return 200 status code and 'User Registered Successfully'", async () => {
     const res = await supertest(app)
     .post('/')
-    .send( { username: 'airplane3', password: '1234' } );
+    .send( { username: 'airplane1', password: '1234' } );
     expect(res.status).toBe(200);
     expect(res.body.message).toBe('User Registered Successfully.')
-    expect(response.body.token).toBeDefined()
+    expect(res.body.token).toBeDefined()
   });
 
   it("should return a 400 status code and 'Username already exists. Please choose a different one.' message", async () => {

@@ -28,25 +28,31 @@ const validate = (req, res, next) => {
 }
 
 const register = (req, res, next) => {
+  //Hash the user's password
   bcrypt.hash(req.body.password, 10, function(err, hashedPass) {
     if(err) {
+      //If there's an error, return a 400 status code and an error message
       return res.status(400).json({
         message: 'An error has occurred.',
       });
     }
+    //Check if the username already exists in the database
     Login.findOne({ username: req.body.username })
       .then(existingUser => {
         if (existingUser) {
+          //If the username already exists, return a 400 status code and an error message
           return res.status(400).json({
             message: 'Username already exists. Please choose a different one.',
           });
         }
+        //If the username doesn't already exist, create a new user object and save it to the database
         let user = new Login ({
           username: req.body.username,
           password: hashedPass
         })
         user.save()
           .then(user => {
+            //If the user is saved successfully, generate a JWT token and return a 200 status code and a success message with the token
             const token = jwt.sign(
               {
                 username: user.username,
@@ -58,13 +64,15 @@ const register = (req, res, next) => {
             return res.status(200).json({ message: 'User Registered Successfully.', token: token });
           })
           .catch(error => {
-            return res.status(404).json({
+            //If there's an error saving the user, return a 404 status code and an error message
+            return res.status(400).json({
               message: 'An error has occurred.',
             });
           });
       })
       .catch(error => {
-        return res.status(402).json({
+        //If there's an error checking for an existing user, return a 402 status code and an error message
+        return res.status(400).json({
           message: 'An error has occurred.',
         });
       });
