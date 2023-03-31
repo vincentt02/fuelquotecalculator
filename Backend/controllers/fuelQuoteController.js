@@ -38,7 +38,6 @@ const getUserID = async (req, res) => {
 };
 
 const getClientData = async (req, res) => {
-  // go into database
   // extract client profile data address
   const query = { userID: userId };
   const data = await clientInformation.findOne(query);
@@ -50,21 +49,24 @@ const getClientData = async (req, res) => {
 
 const getSuggestedPrice = async (req, res) => {
   // i'll assume this will be completed in the backend,database
-  // and i'll be able to also just extract from db
   res.status(200).json({ suggestedPrice: 1.5 });
   console.log("Suggested Price Calculated!");
 };
 
 const sendToDB = async (req, res) => {
+  // backend receives token twice bruhh
+  const decoded = jwt.decode(req.body.userID)
+  const userID2 = decoded.userId;
+
   const newQuote = fuelQuote({
     numG: req.body.gallonsRequested,
     address: req.body.address,
     date: req.body.dateRequested,
     price: 1,
     due: 1,
-    userID: userID,
+    userID: userID2,
   });
-  // console.log(newQuote);
+
   const insertedQuote = await newQuote.save();
   return res.status(201).json(insertedQuote);
 };

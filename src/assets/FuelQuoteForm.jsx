@@ -20,7 +20,6 @@ export default function FuelQuoteForm() {
     // send user gallons and date first
     const formattedDate = format(dateRequested, "MM/dd/yyyy");
     try {
-      // format(dateRequested, 'MM/dd/yyyy');
       const response = await fetch("api/fuelquote/", {
         method: "POST",
         headers: {
@@ -30,7 +29,7 @@ export default function FuelQuoteForm() {
           gallonsRequested: gallonsRequested,
           dateRequested: formattedDate,
           address: clientAddress,
-          token: token,
+          userID: token,
         }),
       });
       if (response.ok) {
