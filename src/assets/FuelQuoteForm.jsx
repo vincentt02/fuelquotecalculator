@@ -47,11 +47,26 @@ export default function FuelQuoteForm() {
       });
       if (response.ok) {
         const data = await response.json();
-        console.log("successful Get Quote");
-        console.log(data);
-        console.log(dateRequested);
         setSuggestedPrice(data.suggestedPrice);
         setAmountDue(gallonsRequested * data.suggestedPrice);
+      }
+    } catch (error) {
+      console.log(error.error);
+    }
+
+    try {
+      const response = await fetch("api/fuelquote/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          gallonsRequested: gallonsRequested,
+          dateRequested: dateRequested,
+        }),
+      });
+      if (response.ok) {
+        console.log("POST REQUEST OKAY");
       }
     } catch (error) {
       console.log(error.error);
