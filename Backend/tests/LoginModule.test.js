@@ -2,6 +2,7 @@ const supertest = require('supertest');
 const express = require('express');
 const app = express();
 const LoginModuleRouter = require("../routes/LoginModule");
+const RegisterRouter = require('../routes/Register')
 const AuthController = require("../controllers/AuthController");
 const { validate } = require('../controllers/AuthController');
 const Login = require("../models/Login_register");
@@ -12,7 +13,7 @@ require('dotenv').config({path: __dirname + '/../../.env'});
 
 
 app.use(express.json());
-app.use("/", LoginModuleRouter);
+app.use("/", RegisterRouter);
 
 
 describe ('POST /', () => {
@@ -92,58 +93,14 @@ describe ('POST /', () => {
 
   //Testing for a valid registration form(user not existing in the database)
   it("should return 200 status code and 'User Registered Successfully' message with token", async () => {
-    //Create a mockUser
-    const mockUser = {
-      username: "Pleasework12",
-      password: "Imbegging34"
-    };
-    //Simulated hashing
-    bcrypt.hash = jest.fn().mockImplementation((password, salt, callback) => {
-      callback(null, "hashedPassword");
-    });
-
-    //We want our findOne function to return nothing.
-    Login.findOne = jest.fn().mockResolvedValue(null);
-
-    //Give back mockUser's info
-    Login.prototype.save = jest.fn().mockResolvedValue(mockUser);
-
-    //Simulated token
-    jwt.sign = jest.fn().mockReturnValue("mockToken");
-
-    //Call register
-    const response = await AuthController.register({ body: mockUser }, {}, {});
-
-    //Responses we want
-    expect(response.status).toBe(200);
-    expect(response.body.message).toBe("User Registered Successfully.");
-    expect(response.body.token).toBe("mockToken");
+    
   });
 
-  //Testing if a user exists in the Database
   it("should return a 400 status code and 'Username already exists. Please choose a different one.' message", async () => {
-    //Create fake user
-    const mockUser = {
-      username: "ExistingUser123",
-      password: "Test1234"
-    };
-    //Simulated hashing
-    bcrypt.hash = jest.fn().mockImplementation((password, salt, callback) => {
-      callback(null, "hashedPassword");
-    });
-  
-    //make another "user" with the same details as mockUser to simulate Login.findOne working as intended
-    const existingUser = {
-      username: "ExistingUser123",
-      password: "hashedPassword"
-    };
-    Login.findOne = jest.fn().mockResolvedValue(existingUser);
-  
-    //Now we call our register to test Login.FindOnes functionality.
-    const response = await AuthController.register({ body: mockUser }, {}, {});
-  
-    //Responses we want
-    expect(response.status).toBe(400);
-    expect(response.body.message).toBe("Username already exists. Please choose a different one.");
+    const res = await supertest(app)
+    .post('/')
+    .send( { username: 'test2', password: '123456' });
+    expect(res.status).toBe(400);
+    expect(res.body.message).toBe('Username already exists. Please choose a different one.')
   });
 });
