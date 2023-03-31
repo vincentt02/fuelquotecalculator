@@ -7,6 +7,8 @@ import "../css/FuelQuoteForm.css";
 import "react-datepicker/dist/react-datepicker.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
+import { token } from "../assets/Login.jsx";
+
 export default function FuelQuoteForm() {
   const [gallonsRequested, setGallonsRequested] = useState(0);
   const [dateRequested, setDateRequested] = useState(0);
@@ -15,6 +17,24 @@ export default function FuelQuoteForm() {
   const [clientAddress, setClientAddress] = useState(0);
 
   useEffect(() => {
+    const sendClientToken = async () => {
+      try {
+        // format(dateRequested, 'MM/dd/yyyy');
+        const response = await fetch("api/fuelquote/token", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ token: token }),
+        });
+        if (response.ok) {
+          console.log("POST REQUEST OKAY");
+        }
+      } catch (error) {
+        console.log(error.error);
+      }
+    }
+
     const getClientAddress = async () => {
       try {
         const response = await fetch("/api/fuelquote/clientdata", {
@@ -22,6 +42,7 @@ export default function FuelQuoteForm() {
           headers: {
             "Content-Type": "application/json",
           },
+          // body: JSON.stringify( { token: token } )
         });
         if (response.ok) {
           const data = await response.json();
@@ -33,11 +54,14 @@ export default function FuelQuoteForm() {
         console.log(error.error);
       }
     };
+    
+    sendClientToken();
     getClientAddress();
   }, []);
 
   const handleGetQuote = async () => {
     // retrieve and display
+    const temp = format(dateRequested, 'MM/dd/yyyy')
     try {
       const response = await fetch("api/fuelquote/suggestedprice", {
         method: "GET",
@@ -55,6 +79,7 @@ export default function FuelQuoteForm() {
     }
 
     try {
+      // format(dateRequested, 'MM/dd/yyyy');
       const response = await fetch("api/fuelquote/", {
         method: "POST",
         headers: {
@@ -62,7 +87,7 @@ export default function FuelQuoteForm() {
         },
         body: JSON.stringify({
           gallonsRequested: gallonsRequested,
-          dateRequested: dateRequested,
+          dateRequested: temp,
         }),
       });
       if (response.ok) {
@@ -93,7 +118,7 @@ export default function FuelQuoteForm() {
         <Form.Group controlId="deliveryDate">
           <Form.Label>Delivery Date:</Form.Label>
           <DatePicker
-            format="MM/dd/yyyy"
+            dateFormat="MM/dd/yyyy"
             selected={dateRequested}
             onChange={(date) => {
               setDateRequested(date);

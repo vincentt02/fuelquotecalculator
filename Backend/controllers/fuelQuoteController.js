@@ -1,4 +1,7 @@
 const Yup = require("yup");
+const jwt = require("jsonwebtoken");
+
+var userId;
 
 // date still needs some work i cant get the validation right
 const fuelQuoteSchema = Yup.object({
@@ -23,11 +26,23 @@ const fuelQuoteSchema = Yup.object({
         return date instanceof Date && !isNaN(date);
       }
     ),
+  token: Yup.string().required("Missing Token"),
 });
+
+const getUserId = async (req, res) => {
+  const decoded = jwt.decode(req.body.token);
+  userId = decoded;
+  console.log(userId.userId);
+  res.status(200).send({ data: "form received" });
+};
 
 const getClientData = async (req, res) => {
   // go into database
   // extract client profile data address
+  // const decoded = jwt.decode(req.body.token)
+  // console.log(decoded.userId)
+
+  console.log(req.body);
   res.status(200).json({ clientAddress: "123 Main St Houston, TX 77001" });
   console.log("Client Address Extracted!");
 };
@@ -35,9 +50,11 @@ const getClientData = async (req, res) => {
 const getSuggestedPrice = async (req, res) => {
   // i'll assume this will be completed in the backend,database
   // and i'll be able to also just extract from db
-  res.status(200).json({ suggestedPrice: 1.50 });
+  res.status(200).json({ suggestedPrice: 1.5 });
   console.log("Suggested Price Calculated!");
 };
+
+const sendToDB = (body) => {};
 
 const submitFuelQuote = (req, res) => {
   const fuelQuote = req.body;
@@ -50,6 +67,7 @@ const submitFuelQuote = (req, res) => {
       res.status(200).send({ data: "form received" });
       console.log("Valid Form");
       console.log(req.body);
+      sendToDB(fuelQuote);
     })
     .catch((err) => {
       console.log(err.errors);
@@ -58,6 +76,7 @@ const submitFuelQuote = (req, res) => {
 };
 
 module.exports = {
+  getUserId,
   getClientData,
   getSuggestedPrice,
   submitFuelQuote,

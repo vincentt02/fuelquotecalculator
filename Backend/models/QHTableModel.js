@@ -29,4 +29,4 @@ const QuoteTableSchema = new mongoose.Schema({
 }, { timestamps: true })
 
 
-module.exports = mongoose.model('QuoteHistoryModel', QuoteTableSchema)
+module.exports = mongoose.model('FuelQuote', QuoteTableSchema)
