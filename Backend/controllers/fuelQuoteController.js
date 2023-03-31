@@ -4,7 +4,7 @@ const fuelquoteModel = require("../models/fuelQuote.js");
 const { clientInformation } = require("../models/clientInformation.js");
 const fuelQuote = require("../models/fuelQuote.js");
 
-var userId, address = null;
+var userId = null;
 
 // date still needs some work i cant get the validation right
 const fuelQuoteSchema = Yup.object({
@@ -56,13 +56,31 @@ const getSuggestedPrice = async (req, res) => {
   console.log("Suggested Price Calculated!");
 };
 
+const sendToDB = async (req, res) => {
+  // const fuelQuote = new fuelquoteModel({
+  //   numG: body.gallonsRequested,
+  //   address: address, // add address data here
+  //   date: body.dateRequested,
+  //   price: 0, // add suggested price data here
+  //   due: 0, // calculate due price here
+  //   userID: userId,
+  // });
 
-const sendToDB = async (body) => {
-  const newQuote = fuelQuote( { ...body, userID: userId } )
+  // console.log(body);
+  const decoded = jwt.decode(req.body.token)
+  const userID2 = decoded.userId;
+  const newQuote = fuelQuote({
+    numG: req.body.gallonsRequested,
+    address: req.body.address,
+    date: req.body.dateRequested,
+    price: 0,
+    due: 0,
+    userID: userID2,
+  });
+  // console.log(newQuote);
   const insertedQuote = await newQuote.save();
   return res.status(201).json(insertedQuote);
 };
-  
 
 const submitFuelQuote = (req, res) => {
   const fuelQuote = req.body;
@@ -72,10 +90,10 @@ const submitFuelQuote = (req, res) => {
       abortEarly: false,
     })
     .then((valid) => {
-      res.status(200).send({ data: "form received" });
+      // res.status(200).send({ data: "form received" });
       console.log("Valid Form");
       console.log(req.body);
-      sendToDB(fuelQuote);
+      sendToDB(req, req);
     })
     .catch((err) => {
       console.log(err.errors);

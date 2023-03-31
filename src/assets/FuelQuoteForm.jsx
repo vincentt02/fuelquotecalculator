@@ -88,6 +88,7 @@ export default function FuelQuoteForm() {
         body: JSON.stringify({
           gallonsRequested: gallonsRequested,
           dateRequested: temp,
+          address: clientAddress,
           token: token,
         }),
       });
