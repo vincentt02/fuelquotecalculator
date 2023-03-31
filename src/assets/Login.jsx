@@ -3,16 +3,19 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Alert from 'react-bootstrap/Alert';
 import "../css/Login.css"
+import { useNavigate } from "react-router-dom"
+
+export var token = null
 
 
 export default function Login() {
-
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [showAlert, setShowAlert] = useState(false);
 
+  const navigate = useNavigate();
   
   const loginHandler = async (event) => {
     event.preventDefault(); // prevent the default form submission behavior
@@ -50,6 +53,8 @@ export default function Login() {
 
       const responseData = await response.json();
       console.log(responseData); // log the response data to the console in the browser.
+      token = responseData.token;
+      navigate("/");
     } catch (error) {
       console.error('Error:', error);
     }
@@ -94,6 +99,8 @@ export default function Login() {
 
       const responseData = await response.json();
       console.log(responseData); // log the response data to the console in the browser.
+      token = responseData.token;
+      navigate("/");
     } catch (error) {
       console.error('Error:', error);
     }
@@ -111,70 +118,59 @@ export default function Login() {
   };
 
   return (
-    <div className='login_wrapper'>
-       {showAlert && 
-        <Alert 
-        variant="danger" 
-        onClose={() => setShowAlert(false)}
-        dismissible
-        style={{position: "fixed", bottom: "275px", left: "50%", transform: "translateX(-50%)"}}
+    <div className='login_container'>  <div className='loginForm_wrapper'>
+    <Form>
+      <Form.Group className="mb-3" controlId="username">
+        <Form.Label>Username:</Form.Label>
+        <Form.Control
+          type="text"
+          placeholder="Enter Username"
+          value={username}
+          onChange={handleUsernameChange}
+          isInvalid={usernameError}
+          required
+        />
+        <Form.Control.Feedback type="invalid">
+          {usernameError}
+        </Form.Control.Feedback>
+      </Form.Group>
+
+      <Form.Group className="mb-3" controlId="password">
+        <Form.Label>Password</Form.Label>
+        <Form.Control
+          type="password"
+          placeholder="Enter Password"
+          value={password}
+          onChange={handlePasswordChange}
+          isInvalid={passwordError}
+          required
+        />
+        <Form.Control.Feedback type="invalid">
+          {passwordError}
+        </Form.Control.Feedback>
+      </Form.Group>
+      <div className="buttons">
+       
+       
+
+        <Button 
+    variant="primary" 
+    type="submit"
+    onClick={loginHandler}
+    >
+      Login
+    </Button>
+    <Button
+          variant="danger"
+          type="button"
+          onClick={registerHandler}
         >
-          <Alert.Heading>Username already exists!</Alert.Heading>
-          <p>
-            Please try a different username.
-          </p>
-        </Alert>
-      }
-      <Form>
-        <Form.Group className="mb-3" controlId="username">
-          <Form.Label>Username:</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Enter Username"
-            value={username}
-            onChange={handleUsernameChange}
-            isInvalid={usernameError}
-            required
-          />
-          <Form.Control.Feedback type="invalid">
-            {usernameError}
-          </Form.Control.Feedback>
-        </Form.Group>
-
-        <Form.Group className="mb-3" controlId="password">
-          <Form.Label>Password</Form.Label>
-          <Form.Control
-            type="password"
-            placeholder="Enter Password"
-            value={password}
-            onChange={handlePasswordChange}
-            isInvalid={passwordError}
-            required
-          />
-          <Form.Control.Feedback type="invalid">
-            {passwordError}
-          </Form.Control.Feedback>
-        </Form.Group>
-        <div className="buttons">
-         
-         
-
-          <Button 
-      variant="primary" 
-      type="submit"
-      onClick={loginHandler}
-      >
-        Login
-      </Button>
-      <Button
-            variant="danger"
-            type="button"
-            onClick={registerHandler}
-          >
-            Register
-          </Button>
-        </div>
-      </Form>
-    </div>
+          Register
+        </Button>
+      </div>
+    </Form>
+  </div></div>
+  
   );
 }
+

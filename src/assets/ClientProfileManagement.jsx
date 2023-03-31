@@ -4,6 +4,8 @@ import "../css/ClientProfileManagement.css";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 
+import { token } from "../assets/Login.jsx"
+
 export default function ClientProfileManagement() {
   const stateOptions = [
     "Alabama",
@@ -58,7 +60,7 @@ export default function ClientProfileManagement() {
     "Wyoming",
   ];
 
-  const [formData, setFormData] = useState({fullName: "", addressOne: "", addressTwo: "", city: "", state: "Alabama", zipcode: ""});
+  const [formData, setFormData] = useState({fullName: "", addressOne: "", addressTwo: "", city: "", state: "Alabama", zipcode: "", token: token});
   
 
   const handleInputChange = (e) => {

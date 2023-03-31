@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const CPMFormSchema = new mongoose.Schema({
+const clientInformationSchema = new mongoose.Schema({
     fullName: {
         type: String,
         required: true,
@@ -25,8 +25,12 @@ const CPMFormSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    userID: {
+        type: String,
+        required: true,
+    }
 })
 
-const CPMForm = mongoose.model("CPMForm", CPMFormSchema);
+const clientInformation = mongoose.model("clientinformation", clientInformationSchema);
 
-module.exports = { CPMForm }
+module.exports = { clientInformation }

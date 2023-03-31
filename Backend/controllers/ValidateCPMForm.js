@@ -1,4 +1,7 @@
 const Yup = require("yup");
+const jwt = require('jsonwebtoken')
+
+const { clientInformation } = require('../models/clientInformation.js')
 
 const stateOptions = [
   "Alabama",
@@ -67,7 +70,24 @@ const formSchema = Yup.object({
       .required("Zipcode Required")
       .min(5, "Zipcode too short")
       .max(9, "Zipcode too long"),
+    token: Yup.string().required("Missing Token")
   });
+
+const validFormHandler = async (req, res) => {
+  console.log(req.body)
+  const decoded = jwt.decode(req.body.token)
+  const query = {userID: decoded.userId};
+
+  const insertedForm = await clientInformation.findOneAndUpdate(query, {...req.body,
+    userID: decoded.userId}, 
+    {
+    new: true,
+    upsert: true
+  })
+
+  return res.status(201).json(insertedForm)
+
+}
 
 const validateCPMForm = (req, res) => {
     const formData = req.body;
@@ -81,9 +101,10 @@ const validateCPMForm = (req, res) => {
       })
       .then((valid) => {
         if (valid) {
-          res.send({ data: "Form received" });
+          // res.send({ data: "Form received" });
           console.log("Valid Form");
-          console.log(req.body);
+          // console.log(req.body);
+          validFormHandler(req, res) 
         }
       });
 }
