@@ -93,7 +93,7 @@ const submitFuelQuote = (req, res) => {
       // res.status(200).send({ data: "form received" });
       console.log("Valid Form");
       console.log(req.body);
-      sendToDB(req, req);
+      sendToDB(req, res);
     })
     .catch((err) => {
       console.log(err.errors);
