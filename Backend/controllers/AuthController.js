@@ -58,13 +58,13 @@ const register = (req, res, next) => {
             return res.status(200).json({ message: 'User Registered Successfully.', token: token });
           })
           .catch(error => {
-            return res.status(400).json({
+            return res.status(404).json({
               message: 'An error has occurred.',
             });
           });
       })
       .catch(error => {
-        return res.status(400).json({
+        return res.status(402).json({
           message: 'An error has occurred.',
         });
       });
