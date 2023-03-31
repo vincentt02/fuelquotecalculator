@@ -1,6 +1,9 @@
 const Yup = require("yup");
-const jwt = require('jsonwebtoken')
-const QuoteHistoryModel = require("../models/QHTableModel.js");
+const jwt = require("jsonwebtoken")
+
+const fuelquoteModel = require("../models/fuelQuote.js")
+
+var userID = null;
 
 const quoteTableSchema = Yup.object({
   numG: Yup.number()
@@ -51,8 +54,18 @@ const filterValidQuotes = async (quotes) => {
   return validQuotes;
 };
 
+const getToken = async (req, res) => {
+  // console.log(req.body)
+  const decoded = jwt.decode(req.body.token)
+  userID = decoded.userId;
+  res.status(200).send("Token Received");
+}
+
 const getQuoteData = async (req, res) => {
-  const validQuotes = await filterValidQuotes(quoteHistoryArray);
+  const query = { userID: userID };
+
+  const allData = await fuelquoteModel.find(query);
+  const validQuotes = await filterValidQuotes(allData)
   res.status(200).json(validQuotes);
   console.log("Valid quotes extracted!");
   /*
@@ -66,7 +79,10 @@ const getQuoteData = async (req, res) => {
     */
 };
 
+
+
 module.exports = {
   getQuoteData,
   quoteTableSchema,
+  getToken,
 };

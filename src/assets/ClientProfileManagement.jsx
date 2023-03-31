@@ -163,8 +163,8 @@ export default function ClientProfileManagement() {
             placeholder="Enter zipcode"
             onChange={handleInputChange}
             pattern="[0-9]*"
-            minlength="5"
-            maxlength="9"
+            minLength="5"
+            maxLength="9"
             required
           />
         </Form.Group>
