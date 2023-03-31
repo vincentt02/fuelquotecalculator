@@ -2,14 +2,14 @@ const express = require("express");
 const router = express.Router();
 
 const {
-    getUserId,
+    getUserID,
     getClientData,
     getSuggestedPrice,
     submitFuelQuote
-} = require('../controllers/FuelQuoteController')
+} = require('../controllers/fuelQuoteController')
 
 // post route to send token to the backend
-router.post("/fuelquote/token", getUserId);
+router.post("/fuelquote/token", getUserID);
 
 // get client address for FQF
 router.get("/fuelquote/clientdata", getClientData);

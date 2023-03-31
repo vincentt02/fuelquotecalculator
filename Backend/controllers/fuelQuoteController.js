@@ -1,6 +1,5 @@
 const Yup = require("yup");
 const jwt = require("jsonwebtoken");
-const fuelquoteModel = require("../models/fuelQuote.js");
 const { clientInformation } = require("../models/clientInformation.js");
 const fuelQuote = require("../models/fuelQuote.js");
 
@@ -32,7 +31,7 @@ const fuelQuoteSchema = Yup.object({
   token: Yup.string().required("Missing Token"),
 });
 
-const getUserId = async (req, res) => {
+const getUserID = async (req, res) => {
   const decoded = jwt.decode(req.body.token);
   userId = decoded.userId;
   res.status(200).send({ data: "form received" });
@@ -102,7 +101,7 @@ const submitFuelQuote = (req, res) => {
 };
 
 module.exports = {
-  getUserId,
+  getUserID,
   getClientData,
   getSuggestedPrice,
   submitFuelQuote,
