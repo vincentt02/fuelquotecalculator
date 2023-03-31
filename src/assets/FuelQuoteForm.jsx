@@ -1,39 +1,80 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
-import { format } from 'date-fns';
+import { format } from "date-fns";
 import DatePicker from "react-datepicker";
 import Form from "react-bootstrap/Form";
 import "../css/FuelQuoteForm.css";
 import "react-datepicker/dist/react-datepicker.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import { token } from "../assets/Login.jsx"
-
-const FuelDate = () => {
-  const [startDate, setStartDate] = useState(new Date());
-  const [formattedDate, setFormattedDate] = useState('');
-
-  const handleDateChange = (date) => {
-    setStartDate(date);
-    const formatted = format(date, 'MM/dd/yyyy');
-    setFormattedDate(formatted);
-  };
-  
-  return (
-    <div>
-      <DatePicker selected={startDate} onChange={handleDateChange} />
-    </div>
-  );
-};
-
+import { token } from "../assets/Login.jsx";
 
 export default function FuelQuoteForm() {
   const [gallonsRequested, setGallonsRequested] = useState(0);
+  const [dateRequested, setDateRequested] = useState(0);
   const [suggestedPrice, setSuggestedPrice] = useState(0);
   const [amountDue, setAmountDue] = useState(0);
-  const [clientAddress, setClientAddress] = useState("");
+  const [clientAddress, setClientAddress] = useState(0);
+
+  const handleQuote = async () => {
+    // send user gallons and date first
+    const formattedDate = format(dateRequested, "MM/dd/yyyy");
+    try {
+      const response = await fetch("api/fuelquote/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          gallonsRequested: gallonsRequested,
+          dateRequested: formattedDate,
+          address: clientAddress,
+          userID: token,
+        }),
+      });
+      if (response.ok) {
+        console.log("POST REQUEST OKAY");
+      }
+    } catch (error) {
+      console.log(error.error);
+    }
+
+    // calculate suggested price and total price in the backend
+    try {
+      const response = await fetch("api/fuelquote/suggestedprice", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setSuggestedPrice(data.suggestedPrice);
+        setAmountDue(gallonsRequested * data.suggestedPrice);
+      }
+    } catch (error) {
+      console.log(error.error);
+    }
+  };
 
   useEffect(() => {
+    const sendClientToken = async () => {
+      try {
+        const response = await fetch("api/fuelquote/token", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ token: token }),
+        });
+        if (response.ok) {
+          console.log("successfully sent token");
+        }
+      } catch (error) {
+        console.log(error.error);
+      }
+    };
+
     const getClientAddress = async () => {
       try {
         const response = await fetch("/api/fuelquote/clientdata", {
@@ -52,28 +93,10 @@ export default function FuelQuoteForm() {
         console.log(error.error);
       }
     };
+
+    sendClientToken();
     getClientAddress();
   }, []);
-
-  const handleGetQuote = async () => {
-    try {
-      const response = await fetch("api/fuelquote/suggestedprice", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        console.log("successful Get Quote");
-        console.log(data);
-        setSuggestedPrice(data.suggestedPrice);
-        setAmountDue(gallonsRequested * data.suggestedPrice);
-      }
-    } catch (error) {
-      console.log(error.error);
-    }
-  };
 
   return (
     <div className="FuelQuoteForm_wrapper">
@@ -89,25 +112,39 @@ export default function FuelQuoteForm() {
 
         <Form.Group controlId="deliveryAddress">
           <Form.Label>Delivery Address:</Form.Label>
-          <Form.Control value={clientAddress} required readOnly/>
+          <Form.Control value={clientAddress} required readOnly />
         </Form.Group>
 
         <Form.Group controlId="deliveryDate">
           <Form.Label>Delivery Date:</Form.Label>
-          <FuelDate />
+          <DatePicker
+            dateFormat="MM/dd/yyyy"
+            selected={dateRequested}
+            onChange={(date) => {
+              setDateRequested(date);
+            }}
+          />
         </Form.Group>
 
         <Form.Group controlId="suggestedPrice">
           <Form.Label>Suggested Price:</Form.Label>
-          <Form.Control placeholder="Suggested price" value={suggestedPrice} readOnly/>
+          <Form.Control
+            placeholder="Suggested price"
+            value={suggestedPrice}
+            readOnly
+          />
         </Form.Group>
 
         <Form.Group controlId="amountDue">
           <Form.Label>Total Amount Due:</Form.Label>
-          <Form.Control placeholder="Total due" value={amountDue} readOnly/>
+          <Form.Control placeholder="Total due" value={amountDue} readOnly />
         </Form.Group>
 
-        <Button variant="primary" onClick={handleGetQuote}>
+        <Button
+          variant="primary"
+          onClick={handleQuote}
+          disabled={!dateRequested || !gallonsRequested}
+        >
           Get Quote
         </Button>
       </Form>

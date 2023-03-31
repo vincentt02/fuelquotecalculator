@@ -1,7 +1,7 @@
 const Yup = require("yup");
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
 
-const fuelquoteModel = require("../models/fuelQuote.js")
+const fuelquoteModel = require("../models/fuelQuote.js");
 
 var userID = null;
 
@@ -38,7 +38,14 @@ const quoteTableSchema = Yup.object({
     .typeError("due must be a number")
     .required("Due amount is required")
     .positive("Due amount must be a positive number"),
+  userID: Yup.string().required("Missing userID"),
 });
+
+const getUserID = async (req, res) => {
+  const decoded = jwt.decode(req.body.token);
+  userID = decoded.userId;
+  res.status(200).send("userID decoded");
+};
 
 const filterValidQuotes = async (quotes) => {
   const validQuotes = [];
@@ -47,32 +54,25 @@ const filterValidQuotes = async (quotes) => {
       await quoteTableSchema.validate(quote);
       validQuotes.push(quote);
     } catch (error) {
-      console.error("Validation failed:", error.message, quote);
+      // back end log (uncomment for debugging or unit testing)
+      // console.error("Validation failed:", error.message, quote);
     }
   }
   return validQuotes;
 };
 
-const getToken = async (req, res) => {
-  // console.log(req.body)
-  const decoded = jwt.decode(req.body.token)
-  userID = decoded.userId;
-  res.status(200).send("Token Received");
-}
-
 const getQuoteData = async (req, res) => {
   const query = { userID: userID };
 
   const allData = await fuelquoteModel.find(query);
-  const validQuotes = await filterValidQuotes(allData)
+  const validQuotes = await filterValidQuotes(allData);
+
   res.status(200).json(validQuotes);
   console.log("Valid quotes extracted!");
 };
 
-
-
 module.exports = {
   getQuoteData,
   quoteTableSchema,
-  getToken,
+  getUserID,
 };
