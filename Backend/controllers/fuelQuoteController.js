@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const { clientInformation } = require("../models/clientInformation.js");
 const fuelQuote = require("../models/fuelQuote.js");
 
-var userId = null;
+var userID = null;
 
 // date still needs some work i cant get the validation right
 const fuelQuoteSchema = Yup.object({
@@ -28,13 +28,13 @@ const fuelQuoteSchema = Yup.object({
         return date instanceof Date && !isNaN(date);
       }
     ),
-  token: Yup.string().required("Missing Token"),
+  userID: Yup.string().required("Missing userID"),
 });
 
 const getUserID = async (req, res) => {
   const decoded = jwt.decode(req.body.token);
   userId = decoded.userId;
-  res.status(200).send({ data: "form received" });
+  res.status(200).send({ data: "userID decoded" });
 };
 
 const getClientData = async (req, res) => {
@@ -56,25 +56,13 @@ const getSuggestedPrice = async (req, res) => {
 };
 
 const sendToDB = async (req, res) => {
-  // const fuelQuote = new fuelquoteModel({
-  //   numG: body.gallonsRequested,
-  //   address: address, // add address data here
-  //   date: body.dateRequested,
-  //   price: 0, // add suggested price data here
-  //   due: 0, // calculate due price here
-  //   userID: userId,
-  // });
-
-  // console.log(body);
-  const decoded = jwt.decode(req.body.token)
-  const userID2 = decoded.userId;
   const newQuote = fuelQuote({
     numG: req.body.gallonsRequested,
     address: req.body.address,
     date: req.body.dateRequested,
-    price: 0,
-    due: 0,
-    userID: userID2,
+    price: 1,
+    due: 1,
+    userID: userID,
   });
   // console.log(newQuote);
   const insertedQuote = await newQuote.save();

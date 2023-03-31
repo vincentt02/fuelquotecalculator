@@ -41,10 +41,10 @@ const quoteTableSchema = Yup.object({
   userID: Yup.string().required("Missing userID"),
 });
 
-const getToken = async (req, res) => {
+const getUserID = async (req, res) => {
   const decoded = jwt.decode(req.body.token);
   userID = decoded.userId;
-  res.status(200).send("Token Received");
+  res.status(200).send("userID decoded");
 };
 
 const filterValidQuotes = async (quotes) => {
@@ -74,5 +74,5 @@ const getQuoteData = async (req, res) => {
 module.exports = {
   getQuoteData,
   quoteTableSchema,
-  getToken,
+  getUserID,
 };

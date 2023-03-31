@@ -16,52 +16,31 @@ export default function FuelQuoteForm() {
   const [amountDue, setAmountDue] = useState(0);
   const [clientAddress, setClientAddress] = useState(0);
 
-  useEffect(() => {
-    const sendClientToken = async () => {
-      try {
-        // format(dateRequested, 'MM/dd/yyyy');
-        const response = await fetch("api/fuelquote/token", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ token: token }),
-        });
-        if (response.ok) {
-          console.log("POST REQUEST OKAY");
-        }
-      } catch (error) {
-        console.log(error.error);
+  const handleQuote = async () => {
+    // send user gallons and date first
+    const formattedDate = format(dateRequested, "MM/dd/yyyy");
+    try {
+      // format(dateRequested, 'MM/dd/yyyy');
+      const response = await fetch("api/fuelquote/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          gallonsRequested: gallonsRequested,
+          dateRequested: formattedDate,
+          address: clientAddress,
+          token: token,
+        }),
+      });
+      if (response.ok) {
+        console.log("POST REQUEST OKAY");
       }
+    } catch (error) {
+      console.log(error.error);
     }
 
-    const getClientAddress = async () => {
-      try {
-        const response = await fetch("/api/fuelquote/clientdata", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          // body: JSON.stringify( { token: token } )
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setClientAddress(data.clientAddress);
-        } else {
-          console.log("bruh");
-        }
-      } catch (error) {
-        console.log(error.error);
-      }
-    };
-    
-    sendClientToken();
-    getClientAddress();
-  }, []);
-
-  const handleGetQuote = async () => {
-    // retrieve and display
-    const temp = format(dateRequested, 'MM/dd/yyyy')
+    // calculate suggested price and total price in the backend
     try {
       const response = await fetch("api/fuelquote/suggestedprice", {
         method: "GET",
@@ -77,28 +56,48 @@ export default function FuelQuoteForm() {
     } catch (error) {
       console.log(error.error);
     }
-
-    try {
-      // format(dateRequested, 'MM/dd/yyyy');
-      const response = await fetch("api/fuelquote/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          gallonsRequested: gallonsRequested,
-          dateRequested: temp,
-          address: clientAddress,
-          token: token,
-        }),
-      });
-      if (response.ok) {
-        console.log("POST REQUEST OKAY");
-      }
-    } catch (error) {
-      console.log(error.error);
-    }
   };
+
+  useEffect(() => {
+    const sendClientToken = async () => {
+      try {
+        const response = await fetch("api/fuelquote/token", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ token: token }),
+        });
+        if (response.ok) {
+          console.log("successfully sent token");
+        }
+      } catch (error) {
+        console.log(error.error);
+      }
+    };
+
+    const getClientAddress = async () => {
+      try {
+        const response = await fetch("/api/fuelquote/clientdata", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setClientAddress(data.clientAddress);
+        } else {
+          console.log("bruh");
+        }
+      } catch (error) {
+        console.log(error.error);
+      }
+    };
+
+    sendClientToken();
+    getClientAddress();
+  }, []);
 
   return (
     <div className="FuelQuoteForm_wrapper">
@@ -144,7 +143,7 @@ export default function FuelQuoteForm() {
 
         <Button
           variant="primary"
-          onClick={handleGetQuote}
+          onClick={handleQuote}
           disabled={!dateRequested || !gallonsRequested}
         >
           Get Quote
