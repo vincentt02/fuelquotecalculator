@@ -23,7 +23,7 @@ describe ('POST /', () => {
   
   
 
-//   // Testing for an invalid form
+   // Testing for an invalid form
   it("should return a 400 status code and error messages for invalid input", async () => {
     const response = await supertest(app)
       .post('/')
