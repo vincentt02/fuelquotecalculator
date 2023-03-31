@@ -80,7 +80,7 @@ const login = (req, res, next) => {
         if (!existingUser) {
           return res.status(400).json({ message: 'User not found.' });
         }
-  
+        
         // Compare the password provided with the stored password hash
         bcrypt.compare(req.body.password, existingUser.password, function(err, result) {
           // If there's an error in comparison other than passwords dont match, send an error response
@@ -108,6 +108,7 @@ const login = (req, res, next) => {
       })
       .catch(error => {
         // If there's an error while processing the request, send an error response
+        console.log(error);
         res.json({ message: 'An error has occurred.' });
       });
   };

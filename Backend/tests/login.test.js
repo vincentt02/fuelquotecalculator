@@ -1,6 +1,6 @@
 const express = require('express');
 const supertest = require('supertest');
-require('dotenv').config({path: '../../env'});
+require('dotenv').config({path: __dirname + '/../../.env'});
 const mongoose = require('mongoose');
 const app = express();
 
@@ -9,13 +9,12 @@ const LoginModuleRouter = require("../routes/LoginModule");
 app.use(express.json());
 app.use("/", LoginModuleRouter);
 
-const DB_URI = "mongodb+srv://elijahlopez:haMNSPrFoCj8nq8T@fuelquotedatabase.blessbs.mongodb.net/FQDatabase?retryWrites=true&w=majority";
 
 describe ('POST /', () => {
 
   //connect to mongoose DB and then disconnect
   beforeAll(async () => {
-    await mongoose.connect(DB_URI, { useNewUrlParser: true });
+    await mongoose.connect(process.env.DATABASE_URI, { useNewUrlParser: true });
   });
 
   afterAll(async () => {
@@ -24,7 +23,7 @@ describe ('POST /', () => {
   
   
 
-  // Testing for an invalid form
+//   // Testing for an invalid form
   it("should return a 400 status code and error messages for invalid input", async () => {
     const response = await supertest(app)
       .post('/')
@@ -59,25 +58,27 @@ describe ('POST /', () => {
     expect(response.status).toBe(400);
     expect(response.body.message).toEqual("User not found.")
       
-    })
-  });
+    });
+  
 
-
-// describe('POST /', () => {
-//   it('should return a 400 status code when given an invalid username or password', async () => {
-//     const response = await supertest(app)
-//       .post('/')
-//       .send({ username: 'invalidUsername', password: 'invalidPassword' })
-//     expect(response.status).toBe(400)
-//     expect(response.body.message).toEqual('Authentication failed. Password is incorrect.')
-//   })
   //testing for user found, and token sent
   it('should return a 200 status code and token when given a valid username and password', async () => {
     const response = await supertest(app)
       .post('/')
-      .send({ username: 'testuser', password: '$2a$10$dvb7VQHRAzDfvmwUNtPkfumTvnKoC5W/4vyURsgNbk3dNd96wi8ne' })
+      .send({ username: 'ecolijah', password: '1234' })
     expect(response.status).toBe(200)
     expect(response.body.message).toEqual('Authentication successful.')
     expect(response.body.token).toBeDefined()
+    
   });
+  //testing for user found, incorrect password
+  it('should return a 401 status code and error: Authentication failed. Password is incorrect.', async () => {
+    const response = await supertest(app)
+      .post('/')
+      .send({ username: 'ecolijah', password: '12345' })
+    expect(response.status).toBe(401)
+    expect(response.body.message).toEqual('Authentication failed. Password is incorrect.')
+    
+  });
+});
 
