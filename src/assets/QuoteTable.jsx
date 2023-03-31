@@ -1,36 +1,63 @@
 import Table from "react-bootstrap/Table";
 import React, { useState, useEffect } from "react";
 
+import { token } from "../assets/Login"
+
 export default function QuoteTable() {
   const [quoteData, setQuoteData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const getQuoteData = async () => {
-      try {
-        const response = await fetch("/api/quotetable/quotedata", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        if (response.ok) {
-          const data = await response.json(); // resolve the promise to get data
-          setQuoteData(data);
-          setLoading(false);
-          console.log("successful", data); // log the data
-        } else {
-          setError("Error retrieving quote data");
-          setLoading(false);
-        }
-      } catch (error) {
-        setError(error.message);
+  const getQuoteData = async () => {
+    try {
+      const response = await fetch("/api/quotetable/quotedata", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.ok) {
+        const data = await response.json(); // resolve the promise to get data
+        setQuoteData(data);
+        setLoading(false);
+        // console.log("successful", data); // log the data
+      } else {
+        setError("Error retrieving quote data");
         setLoading(false);
       }
-    };
-    getQuoteData();
+    } catch (error) {
+      setError(error.message);
+      setLoading(false);
+    }
+  };
+  
+  useEffect(() => {
+    const sendToken = async () => {
+    try {
+      const response = await fetch("/api/quotetable/quotedata", {
+        method: "POST",
+        headers: {
+          "Content-Type" : "application/json",
+        },
+        body: JSON.stringify({token: token})
+      });
+
+      if(response.ok) {
+        console.log("successful")
+      } else {
+
+      } 
+    } catch (error) {
+
+    }
+  }
+  sendToken();
+  getQuoteData();
   }, []);
+
+    
+
+ 
 
   if (loading) {
     return <div>Loading...</div>;
