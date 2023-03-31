@@ -1,7 +1,10 @@
 const Yup = require("yup");
 const jwt = require("jsonwebtoken");
+const fuelquoteModel = require("../models/fuelQuote.js");
+const { clientInformation } = require("../models/clientInformation.js");
+const fuelQuote = require("../models/fuelQuote.js");
 
-var userId;
+var userId, address = null;
 
 // date still needs some work i cant get the validation right
 const fuelQuoteSchema = Yup.object({
@@ -31,20 +34,19 @@ const fuelQuoteSchema = Yup.object({
 
 const getUserId = async (req, res) => {
   const decoded = jwt.decode(req.body.token);
-  userId = decoded;
-  console.log(userId.userId);
+  userId = decoded.userId;
   res.status(200).send({ data: "form received" });
 };
 
 const getClientData = async (req, res) => {
   // go into database
   // extract client profile data address
-  // const decoded = jwt.decode(req.body.token)
-  // console.log(decoded.userId)
+  const query = { userID: userId };
+  const data = await clientInformation.findOne(query);
 
-  console.log(req.body);
-  res.status(200).json({ clientAddress: "123 Main St Houston, TX 77001" });
-  console.log("Client Address Extracted!");
+  address = data.addressOne;
+
+  res.status(200).json({ clientAddress: data.addressOne });
 };
 
 const getSuggestedPrice = async (req, res) => {
@@ -54,7 +56,13 @@ const getSuggestedPrice = async (req, res) => {
   console.log("Suggested Price Calculated!");
 };
 
-const sendToDB = (body) => {};
+
+const sendToDB = async (body) => {
+  const newQuote = fuelQuote( { ...body, userID: userId } )
+  const insertedQuote = await newQuote.save();
+  return res.status(201).json(insertedQuote);
+};
+  
 
 const submitFuelQuote = (req, res) => {
   const fuelQuote = req.body;
