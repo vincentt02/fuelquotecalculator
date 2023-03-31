@@ -5,7 +5,7 @@ const {
     getClientData,
     getSuggestedPrice,
     submitFuelQuote
-} = require('../controllers/fuelQuoteController')
+} = require('../controllers/FuelQuoteController')
 
 // get client address for FQF
 router.get("/fuelquote/clientdata", getClientData);

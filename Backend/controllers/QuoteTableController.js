@@ -117,7 +117,7 @@ const filterValidQuotes = async (quotes) => {
       await quoteTableSchema.validate(quote);
       validQuotes.push(quote);
     } catch (error) {
-      console.error("Validation failed:", error.message, quote);
+      // console.error("Validation failed:", error.message, quote);
     }
   }
   return validQuotes;
@@ -127,13 +127,15 @@ const getQuoteData = async (req, res) => {
   const validQuotes = await filterValidQuotes(quoteHistoryArray);
   res.status(200).json(validQuotes);
   console.log("Valid quotes extracted!");
+  /*
   QuoteHistoryModel.find({ userID: object_id })
     .then((items) => {
-      console.log(items);
+      //console.log(items);
     })
     .catch((error) => {
-      console.log(error);
+      // console.log(error);
     });
+    */
 };
 
 module.exports = {

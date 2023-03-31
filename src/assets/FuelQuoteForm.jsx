@@ -7,27 +7,12 @@ import "../css/FuelQuoteForm.css";
 import "react-datepicker/dist/react-datepicker.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-const FuelDate = () => {
-  const [startDate, setStartDate] = useState(new Date());
-
-  const handleDateChange = (date) => {
-    setStartDate(date);
-    const formatted = format(date, "MM/dd/yyyy");
-  };
-
-  return (
-    <div>
-      <DatePicker selected={startDate} onChange={handleDateChange} />
-    </div>
-  );
-};
-
 export default function FuelQuoteForm() {
   const [gallonsRequested, setGallonsRequested] = useState(0);
   const [dateRequested, setDateRequested] = useState(0);
   const [suggestedPrice, setSuggestedPrice] = useState(0);
   const [amountDue, setAmountDue] = useState(0);
-  const [clientAddress, setClientAddress] = useState("");
+  const [clientAddress, setClientAddress] = useState(0);
 
   useEffect(() => {
     const getClientAddress = async () => {
@@ -64,6 +49,7 @@ export default function FuelQuoteForm() {
         const data = await response.json();
         console.log("successful Get Quote");
         console.log(data);
+        console.log(dateRequested);
         setSuggestedPrice(data.suggestedPrice);
         setAmountDue(gallonsRequested * data.suggestedPrice);
       }
@@ -91,7 +77,13 @@ export default function FuelQuoteForm() {
 
         <Form.Group controlId="deliveryDate">
           <Form.Label>Delivery Date:</Form.Label>
-          <FuelDate />
+          <DatePicker
+            format="MM/dd/yyyy"
+            selected={dateRequested}
+            onChange={(date) => {
+              setDateRequested(date);
+            }}
+          />
         </Form.Group>
 
         <Form.Group controlId="suggestedPrice">
@@ -108,7 +100,11 @@ export default function FuelQuoteForm() {
           <Form.Control placeholder="Total due" value={amountDue} readOnly />
         </Form.Group>
 
-        <Button variant="primary" onClick={handleGetQuote}>
+        <Button
+          variant="primary"
+          onClick={handleGetQuote}
+          disabled={!dateRequested || !gallonsRequested}
+        >
           Get Quote
         </Button>
       </Form>

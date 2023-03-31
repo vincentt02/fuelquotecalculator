@@ -1,5 +1,4 @@
 const mongoose = require("mongoose")
-const { quoteTableSchema } = require("../controllers/QuoteTableController")
 
 const QuoteTableSchema = new mongoose.Schema({
     numG: {
