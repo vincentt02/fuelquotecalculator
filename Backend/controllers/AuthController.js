@@ -64,14 +64,14 @@ const register = (req, res, next) => {
             return res.status(200).json({ message: 'User Registered Successfully.', token: token });
           })
           .catch(error => {
-            //If there's an error saving the user, return a 404 status code and an error message
+            //If there's an error saving the user, return a 400 status code and an error message
             return res.status(400).json({
               message: 'An error has occurred.',
             });
           });
       })
       .catch(error => {
-        //If there's an error checking for an existing user, return a 402 status code and an error message
+        //If there's an error checking for an existing user, return a 400 status code and an error message
         return res.status(400).json({
           message: 'An error has occurred.',
         });

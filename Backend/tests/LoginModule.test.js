@@ -9,6 +9,7 @@ const Login = require("../models/Login_register");
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
+const { MongoMemoryServer } = require('mongodb-memory-server');
 require('dotenv').config({path: __dirname + '/../../.env'});
 
 
@@ -19,11 +20,18 @@ app.use("/", RegisterRouter);
 describe ('POST /', () => {
   //connect to mongoose DB and then disconnect
   beforeAll(async () => {
-    await mongoose.connect(process.env.DATABASE_URI, { useNewUrlParser: true });
+    mongoDb = await MongoMemoryServer.create();
+    const uri = mongoDb.getUri();
+    await mongoose.connect(uri);
+    // Registering a test user
+    const registerTestUser = await supertest(app)
+    .post('/')
+    .send( { username: 'test2', password: '123456' } );
   });
 
   afterAll(async () => {
-    await mongoose.connection.close();
+    await mongoose.disconnect();
+    await mongoDb.stop()
   });
 
   //   // Testing for an invalid form
