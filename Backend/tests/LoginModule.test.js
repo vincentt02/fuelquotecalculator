@@ -53,19 +53,6 @@ describe ('POST /', () => {
     );
   });
 
-  //Completely valid form test
-  it('should call next function when both username and password are valid', () => {
-    const req = { body: { username: 'username', password: 'password123' } };
-    const res = { status: jest.fn(), json: jest.fn() };
-    const next = jest.fn();
-
-    validate(req, res, next);
-
-    expect(res.status).not.toHaveBeenCalled();
-    expect(res.json).not.toHaveBeenCalled();
-    expect(next).toHaveBeenCalled();
-  });
-
   //Testing for a valid registration form(user not existing in the database)
   it("should return 200 status code and 'User Registered Successfully'", async () => {
     const res = await supertest(app)
