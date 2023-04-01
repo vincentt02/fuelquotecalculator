@@ -28,7 +28,7 @@ const fuelQuoteSchema = Yup.object({
         return date instanceof Date && !isNaN(date);
       }
     ),
-  userID: Yup.string().required("Missing userID"),
+  token: Yup.string().required("Missing token"),
 });
 
 const getUserID = async (req, res) => {
@@ -55,7 +55,7 @@ const getSuggestedPrice = async (req, res) => {
 
 const sendToDB = async (req, res) => {
   // backend receives token twice bruhh
-  const decoded = jwt.decode(req.body.userID)
+  const decoded = jwt.decode(req.body.token)
   const userID2 = decoded.userId;
 
   const newQuote = fuelQuote({

@@ -7,16 +7,16 @@ const validate = (req, res, next) => {
     const { username, password } = req.body;
     const errors = [];
 
-    if (!username.trim()) {
+    if (!username || !username.trim()) {
       errors.push('Username is required.');
     }
-    if (username.includes(' ')) {
+    if (username && username.includes(' ')) {
       errors.push('Username cannot contain spaces.');
     }
-    if (!password.trim()) {
+    if (!password || !password.trim()) {
       errors.push('Password is required.');
     }
-    if (password.includes(' ')) {
+    if (password && password.includes(' ')) {
       errors.push('Password cannot contain spaces.');
     }
   
@@ -24,52 +24,59 @@ const validate = (req, res, next) => {
       res.status(400).json({ errors });
     } else {
       next();
-    }
+   }
 }
 
 const register = (req, res, next) => {
-    bcrypt.hash(req.body.password, 10, function(err, hashedPass) {
-        if(err) {
-            res.json({
-                error:err
-            })
+  //Hash the user's password
+  bcrypt.hash(req.body.password, 10, function(err, hashedPass) {
+    if(err) {
+      //If there's an error, return a 400 status code and an error message
+      return res.status(400).json({
+        message: 'An error has occurred.',
+      });
+    }
+    //Check if the username already exists in the database
+    Login.findOne({ username: req.body.username })
+      .then(existingUser => {
+        if (existingUser) {
+          //If the username already exists, return a 400 status code and an error message
+          return res.status(400).json({
+            message: 'Username already exists. Please choose a different one.',
+          });
         }
-        Login.findOne({ username: req.body.username })
-        .then(existingUser => {
-            if (existingUser) {
-                return res.status(400).json({
-                    message: 'Username already exists. Please choose a different one.'
-                })
-            }
-            let user = new Login ({
-                username: req.body.username,
-                password: hashedPass
-            })
-            user.save()
-            .then(user => {
-                const token = jwt.sign(
-                  {
-                    username: user.username,
-                    userId: user._id
-                  },
-                  process.env.JWT_KEY, //must include in env file in current environment
-                  { expiresIn: '1h' }
-                );
-    
-                return res.status(200).json({ message: 'User Registered Successfully.', token: token });
-              })
-            .catch(error => {
-                res.json({
-                    message: 'An error has occurred.'
-                })
-            })
+        //If the username doesn't already exist, create a new user object and save it to the database
+        let user = new Login ({
+          username: req.body.username,
+          password: hashedPass
         })
-        .catch(error => {
-            res.json({
-                message: 'An error has occurred.'
-            })
-        })
-    })
+        user.save()
+          .then(user => {
+            //If the user is saved successfully, generate a JWT token and return a 200 status code and a success message with the token
+            const token = jwt.sign(
+              {
+                username: user.username,
+                userId: user._id
+              },
+              process.env.JWT_KEY, //must include in env file in current environment
+              { expiresIn: '1h' }
+            );
+            return res.status(200).json({ message: 'User Registered Successfully.', token: token });
+          })
+          .catch(error => {
+            //If there's an error saving the user, return a 400 status code and an error message
+            return res.status(400).json({
+              message: 'An error has occurred.',
+            });
+          });
+      })
+      .catch(error => {
+        //If there's an error checking for an existing user, return a 400 status code and an error message
+        return res.status(400).json({
+          message: 'An error has occurred.',
+        });
+      });
+  });
 }
 
 const login = (req, res, next) => {

@@ -100,7 +100,7 @@ export default function Login() {
       const responseData = await response.json();
       console.log(responseData); // log the response data to the console in the browser.
       token = responseData.token;
-      navigate("/");
+      navigate("/clientinformation");
     } catch (error) {
       console.error('Error:', error);
     }
