@@ -3,6 +3,7 @@ import "../css/ClientProfileManagement.css";
 
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
+import Alert from "react-bootstrap/Alert";
 
 import { token } from "../assets/Login.jsx"
 
@@ -61,7 +62,7 @@ export default function ClientProfileManagement() {
   ];
 
   const [formData, setFormData] = useState({fullName: "", addressOne: "", addressTwo: "", city: "", state: "Alabama", zipcode: "", token: token});
-  
+  const [successAlert, setSuccessAlert] = useState(false);
 
   const handleInputChange = (e) => {
     const {name, value} = e.target;
@@ -82,6 +83,7 @@ export default function ClientProfileManagement() {
 
       if(response.ok) {
         console.log("successful")
+        setSuccessAlert(true);
       } else {
 
       } 
@@ -92,6 +94,9 @@ export default function ClientProfileManagement() {
 
   return (
     <div className="ClientProfileManagement_wrapper">
+      <Alert show={successAlert} variant="success" onClose={() => setSuccessAlert(false)}   style={{ position: 'fixed', top:600, zIndex: 999 }} dismissible>
+        Form submitted successfully!
+      </Alert>
       <h2>Client Profile Management</h2>
       <Form
         id="clientProfileManagement"
@@ -172,6 +177,10 @@ export default function ClientProfileManagement() {
         <Button variant="primary" type="submit">
           Submit
         </Button>
+
+      
+        
+
       </Form>
     </div>
   );
