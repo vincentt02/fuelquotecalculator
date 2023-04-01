@@ -37,12 +37,6 @@ describe("GET /api/fuel", () => {
       { numG: 2, address: "555 main st", date: "05/04/2023", price: 1, due: 1, userID: "testUSERID" },
       { numG: 950, address: "555 main st", date: "04/06/2023", price: 1, due: 1, userID: "testUSERID" },
     ]);
-    
-    // await db.collection('users').insertMany([
-    //   { numG: 10000, address: "555 main st", date: "04/21/2023", price: 1, due: 1, userID: "testToken" },
-    //   { numG: 2, address: "555 main st", date: "05/04/2023", price: 1, due: 1, userID: "testToken" },
-    //   { numG: 950, address: "555 main st", date: "04/06/2023", price: 1, due: 1, userID: "testToken" },
-    // ]);
   });
 
   afterAll(async () => {
