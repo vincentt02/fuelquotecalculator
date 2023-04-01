@@ -7,7 +7,31 @@ const ClientProfileManagementRoute = require("../routes/ClientProfileManagementR
 app.use(express.json());
 app.use("/", ClientProfileManagementRoute);
 
+const mongoose = require('mongoose');
+
+const jwt = require('jsonwebtoken')
+require('dotenv').config({path: __dirname + '/../../.env'});
+
 describe("POST /api/clientprofilemanagement", () => {
+  const token = jwt.sign({
+    username: "testUsername",
+    userId: "testUSERID"
+  },
+  process.env.JWT_KEY,
+  {expiresIn: '1h'})
+
+   beforeAll(async () => {
+    await mongoose.connect(process.env.DATABASE_URI, { useNewUrlParser: true });
+    
+    
+  });
+
+  afterAll(async () => {
+    await mongoose.connection.close();
+  });
+
+
+
 
   describe("given a valid form", () => {
     const validFormExample = {
@@ -17,12 +41,18 @@ describe("POST /api/clientprofilemanagement", () => {
       city: "Houston",
       state: "Texas",
       zipcode: "12345",
+      token: token,
     };
     it("should return a 200", async () => {
         const response = await supertest(app).post('/').send(validFormExample);
-        expect(response.status).toBe(200);
-        expect(response.body).toEqual({
-            data: "Form received"
+        expect(response.status).toBe(201);
+        expect(response.body).toMatchObject({
+            fullName:"John Smith", 
+            addressOne: "12345 Address St", 
+            city: "Houston", 
+            state: "Texas", 
+            zipcode: "12345", 
+            userID: "testUSERID",
         })
     })
   });
@@ -37,6 +67,7 @@ describe("POST /api/clientprofilemanagement", () => {
       city: "Houston",
       state: "Texas",
       zipcode: "12345",
+      token: token,
     };
     it("should return a 422 along with an error Full Name Required", async () => {
       const response = await supertest(app).post("/").send(invalidFormExample);
@@ -56,6 +87,7 @@ describe("POST /api/clientprofilemanagement", () => {
       city: "Houston",
       state: "Texas",
       zipcode: "12345",
+      token: token,
     };
     it("should return a 422 along with an error Full Name too long", async () => {
       const response = await supertest(app).post("/").send(invalidFormExample);
@@ -75,6 +107,7 @@ describe("POST /api/clientprofilemanagement", () => {
       city: "Houston",
       state: "Texas",
       zipcode: "12345",
+      token: token,
     };
     it("should return a 422", async () => {
       const response = await supertest(app).post("/").send(invalidFormExample);
@@ -94,6 +127,7 @@ describe("POST /api/clientprofilemanagement", () => {
       city: "Houston",
       state: "Texas",
       zipcode: "12345",
+      token: token,
     };
     it("should return a 422", async () => {
       const response = await supertest(app).post("/").send(invalidFormExample);
@@ -113,6 +147,7 @@ describe("POST /api/clientprofilemanagement", () => {
       city: "Houston",
       state: "Texas",
       zipcode: "12345",
+      token: token,
     };
     it("should return a 422", async () => {
       const response = await supertest(app).post("/").send(invalidFormExample);
@@ -132,6 +167,7 @@ describe("POST /api/clientprofilemanagement", () => {
       city: "",
       state: "Texas",
       zipcode: "12345",
+      token: token,
     };
     it("should return a 422", async () => {
       const response = await supertest(app).post("/").send(invalidFormExample);
@@ -151,6 +187,7 @@ describe("POST /api/clientprofilemanagement", () => {
       city: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
       state: "Texas",
       zipcode: "12345",
+      token: token,
     };
     it("should return a 422", async () => {
       const response = await supertest(app).post("/").send(invalidFormExample);
@@ -169,6 +206,7 @@ describe("POST /api/clientprofilemanagement", () => {
       addressTwo: "",
       city: "Houston",
       zipcode: "12345",
+      token: token,
     };
     it("should return a 422", async () => {
       const response = await supertest(app).post("/").send(invalidFormExample);
@@ -188,6 +226,7 @@ describe("POST /api/clientprofilemanagement", () => {
       city: "Houston",
       state: "InvalidState",
       zipcode: "12345",
+      token: token,
     };
     it("should return a 422", async () => {
       const response = await supertest(app).post("/").send(invalidFormExample);
@@ -207,6 +246,7 @@ describe("POST /api/clientprofilemanagement", () => {
       city: "Houston",
       state: "Texas",
       zipcode: "",
+      token: token,
     };
     it("should return a 422", async () => {
       const response = await supertest(app).post("/").send(invalidFormExample);
@@ -227,6 +267,7 @@ describe("POST /api/clientprofilemanagement", () => {
       city: "Houston",
       state: "Texas",
       zipcode: "123",
+      token: token,
     };
     it("should return a 422", async () => {
       const response = await supertest(app).post("/").send(invalidFormExample);
@@ -246,6 +287,7 @@ describe("POST /api/clientprofilemanagement", () => {
       city: "Houston",
       state: "Texas",
       zipcode: "12345678910",
+      token: token,
     };
     it("should return a 422", async () => {
       const response = await supertest(app).post("/").send(invalidFormExample);
