@@ -1,18 +1,19 @@
+require('dotenv').config({path: __dirname + '/../../.env'});
 const supertest = require("supertest");
-
 const express = require("express");
+const mongoose = require('mongoose');
+const { MongoMemoryServer } = require('mongodb-memory-server');
+const jwt = require('jsonwebtoken')
 const app = express();
 const ClientProfileManagementRoute = require("../routes/ClientProfileManagementRouter");
 
 app.use(express.json());
 app.use("/", ClientProfileManagementRoute);
 
-const mongoose = require('mongoose');
 
-const jwt = require('jsonwebtoken')
-require('dotenv').config({path: __dirname + '/../../.env'});
 
 describe("POST /api/clientprofilemanagement", () => {
+
   const token = jwt.sign({
     username: "testUsername",
     userId: "testUSERID"
@@ -20,16 +21,17 @@ describe("POST /api/clientprofilemanagement", () => {
   process.env.JWT_KEY,
   {expiresIn: '1h'})
 
-   beforeAll(async () => {
-    await mongoose.connect(process.env.DATABASE_URI, { useNewUrlParser: true });
-    
-    
+  beforeAll(async () => {
+    mongoDb = await MongoMemoryServer.create();
+    const uri = mongoDb.getUri();
+    await mongoose.connect(uri);
+
   });
 
   afterAll(async () => {
-    await mongoose.connection.close();
+    await mongoose.disconnect();
+    await mongoDb.stop()
   });
-
 
 
 

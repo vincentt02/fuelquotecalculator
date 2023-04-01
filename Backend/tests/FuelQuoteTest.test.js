@@ -1,23 +1,16 @@
+require('dotenv').config({path: __dirname + '/../../.env'});
 const supertest = require("supertest");
 const express = require("express");
+const mongoose = require('mongoose');
+const { MongoMemoryServer } = require('mongodb-memory-server');
+const jwt = require('jsonwebtoken')
 const app = express();
 const fuelQuote = require("../routes/FuelQuoteModule");
+const fuelquoteModel = require("../models/fuelQuote.js");
+const { clientInformation } = require('../models/clientInformation.js')
 
 app.use(express.json());
 app.use("/", fuelQuote);
-
-
-
-const jwt = require('jsonwebtoken')
-require('dotenv').config({path: __dirname + '/../../.env'});
-
-const { MongoMemoryServer } = require('mongodb-memory-server');
-
-const mongoose = require('mongoose');
-
-const fuelquoteModel = require("../models/fuelQuote.js");
-
-const { clientInformation } = require('../models/clientInformation.js')
 
 describe("POST /api/fuelquote", () => {
 
