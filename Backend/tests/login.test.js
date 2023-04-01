@@ -2,23 +2,33 @@ const express = require('express');
 const supertest = require('supertest');
 require('dotenv').config({path: __dirname + '/../../.env'});
 const mongoose = require('mongoose');
+const { MongoMemoryServer } = require('mongodb-memory-server');
 const app = express();
 
 const LoginModuleRouter = require("../routes/LoginModule");
+const RegisterRouter = require('../routes/Register')
 
 app.use(express.json());
 app.use("/", LoginModuleRouter);
+app.use("/register", RegisterRouter);
 
 
 describe ('POST /', () => {
 
   //connect to mongoose DB and then disconnect
   beforeAll(async () => {
-    await mongoose.connect(process.env.DATABASE_URI, { useNewUrlParser: true });
+    mongoDb = await MongoMemoryServer.create();
+    const uri = mongoDb.getUri();
+    await mongoose.connect(uri);
+    // Registering a test user
+    const registerTestUser = await supertest(app)
+    .post('/register')
+    .send( { username: 'ecolijahTest', password: '55555' } );
   });
 
   afterAll(async () => {
-    await mongoose.connection.close();
+    await mongoose.disconnect();
+    await mongoDb.stop()
   });
   
   
@@ -65,7 +75,7 @@ describe ('POST /', () => {
   it('should return a 200 status code and token when given a valid username and password', async () => {
     const response = await supertest(app)
       .post('/')
-      .send({ username: 'ecolijah', password: '1234' })
+      .send({ username: 'ecolijahTest', password: '55555' })
     expect(response.status).toBe(200)
     expect(response.body.message).toEqual('Authentication successful.')
     expect(response.body.token).toBeDefined()
@@ -75,7 +85,7 @@ describe ('POST /', () => {
   it('should return a 401 status code and error: Authentication failed. Password is incorrect.', async () => {
     const response = await supertest(app)
       .post('/')
-      .send({ username: 'ecolijah', password: '12345' })
+      .send({ username: 'ecolijahTest', password: '12345' })
     expect(response.status).toBe(401)
     expect(response.body.message).toEqual('Authentication failed. Password is incorrect.')
     
