@@ -63,20 +63,9 @@ const register = (req, res, next) => {
             );
             return res.status(200).json({ message: 'User Registered Successfully.', token: token });
           })
-          .catch(error => {
-            //If there's an error saving the user, return a 400 status code and an error message
-            return res.status(400).json({
-              message: 'An error has occurred.',
-            });
+
           });
       })
-      .catch(error => {
-        //If there's an error checking for an existing user, return a 400 status code and an error message
-        return res.status(400).json({
-          message: 'An error has occurred.',
-        });
-      });
-  });
 }
 
 const login = (req, res, next) => {
@@ -113,16 +102,11 @@ const login = (req, res, next) => {
           return res.status(401).json({ message: 'Authentication failed. Password is incorrect.' });
         });
       })
-      .catch(error => {
-        // If there's an error while processing the request, send an error response
-        console.log(error);
-        res.json({ message: 'An error has occurred.' });
-      });
   };
   
 
 module.exports = {
     register,
     login,
-    validate
+    validate,
 }

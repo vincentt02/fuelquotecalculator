@@ -11,6 +11,7 @@ const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 require('dotenv').config({path: __dirname + '/../../.env'});
+const {register} = require('../controllers/AuthController');
 
 
 app.use(express.json());
@@ -78,4 +79,30 @@ describe ('POST /', () => {
     expect(res.status).toBe(400);
     expect(res.body.message).toBe('Username already exists. Please choose a different one.')
   });
+
+  it('should return an error when bcrypt.hash fails', async () => {
+    const req = {
+      body: {
+        username: 'test',
+        password: 'password'
+      }
+    };
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn()
+    };
+  
+    jest.spyOn(bcrypt, 'hash').mockImplementation((password, salt, callback) => {
+      callback(new Error('bcrypt error'));
+    });
+  
+    await register(req, res);
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      message: 'An error has occurred.'
+    });
+  });
+
+
+
 });

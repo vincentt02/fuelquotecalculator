@@ -4,9 +4,12 @@ require('dotenv').config({path: __dirname + '/../../.env'});
 const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const app = express();
+const Login = require('../models/Login_register')
 
 const LoginModuleRouter = require("../routes/LoginModule");
 const RegisterRouter = require('../routes/Register')
+const bcrypt = require('bcryptjs');
+const {login} = require('../controllers/AuthController');
 
 app.use(express.json());
 app.use("/", LoginModuleRouter);
@@ -90,5 +93,38 @@ describe ('POST /', () => {
     expect(response.body.message).toEqual('Authentication failed. Password is incorrect.')
     
   });
+
+  it('should return an error when bcrypt.compare throws an error', async () => {
+    // Mock the request and response objects
+    const req = {
+      body: {
+        username: 'ecolijahTest',
+        password: '55555'
+      }
+    };
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn()
+    };
+  
+    //Mock Login.findOne() success
+    jest.spyOn(Login, 'findOne').mockImplementation(() => {
+      return Promise.resolve(req);
+    });
+    // Mock the bcrypt.compare function to throw an error
+    jest.spyOn(bcrypt, 'compare').mockImplementation((password, salt, callback) => {
+      callback(new Error('bcrypt error'));
+    });
+  
+    // Call the function to be tested
+    await login(req, res);
+  
+    // Assert that the response status is 401 and the message is 'Authentication failed.'
+    expect(res.status).toHaveBeenCalledWith(401);
+    expect(res.json).toHaveBeenCalledWith({
+      message: 'Authentication failed.'
+    });
+  });
+
 });
 
