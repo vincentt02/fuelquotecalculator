@@ -73,7 +73,6 @@ const sendToDB = async (req, res) => {
 
   const pricing = new pricingModule(req.body, userID2);
   var suggestedPrice = await pricing.suggestedPrice();
-  console.log("does it make it here?", suggestedPrice)
 
   const newQuote = fuelQuote({
     numG: req.body.gallonsRequested,
@@ -98,12 +97,9 @@ const submitFuelQuote = (req, res) => {
     .then((valid) => {
       // res.status(200).send({ data: "form received" });
       console.log("Valid Form");
-      console.log(req.body);
       sendToDB(req, res);
     })
     .catch((err) => {
-      console.log('FIND ME IT JUST ERRORS UR SHIT BURH')
-      console.log(err.errors);
       res.status(422).send(err.errors);
     });
 };
