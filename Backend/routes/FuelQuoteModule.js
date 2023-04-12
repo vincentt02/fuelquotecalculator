@@ -14,8 +14,8 @@ router.post("/fuelquote/token", getUserID);
 // get client address for FQF
 router.get("/fuelquote/clientdata", getClientData);
 
-// get suggested price
-router.get("/fuelquote/suggestedprice", getSuggestedPrice);
+// get suggested price (but with a post request)
+router.post("/fuelquote/suggestedprice", getSuggestedPrice);
 
 // post gallons requested and delivery date
 router.post("/fuelquote", submitFuelQuote);

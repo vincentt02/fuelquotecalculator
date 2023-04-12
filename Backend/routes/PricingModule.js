@@ -1,19 +1,60 @@
+const { clientInformation } = require("../models/clientInformation.js");
+const fuelQuote = require("../models/fuelQuote.js");
+
 class pricingModule {
 
-    constructor(numGallons, deliveryAdress, deliveryDate) {
-        this.numGallons = numGallons;
-        this.deliveryAdress = deliveryAdress;
-        this.deliveryDate = deliveryDate;
+    constructor(req) {
+        this.suggestedPPG = null;
+        this.userID = req.userID;
+        this.gallonsRequested = req.gallonsRequested;
     }
 
-    suggestedPrice() {
-        //function that uses the objects parameters to return the suggested price per gallon.
-        const suggestedPPG = null;
+    getLocationFactor = async () => {
+        const query = { userID: userID };
+        const client = await clientInformation.findOne(query);
+        if (client && client.state === "Texas") {
+            return 0.02;
+        } else {
+            return 0.04;
+        }
+    }
 
+    getRateHistoryFactor = async () => {
+        const query = { userID: this.userID };
+        const prevQuote = await fuelQuote.findOne(query, {}, { sort: { 'createdAt' : -1 } });
+        if (prevQuote) {
+            return 0.01;
+        } else {
+            return 0.0;
+        }
+    }
+
+    getGallonsReqFactor = () => {
+        if(this.gallonsRequested > 1000)
+            return 0.02
+        return 0.03
+    }
+    
+
+    suggestedPrice = async () => {
+        //function that uses the objects parameters to return the suggested price per gallon.
+        const companyProfitFactor = 0.10;
+        const crudeOilPrice = 1.50; 
+        const locationFactor = await this.getLocationFactor();
+        const rateHistoryFactor = await this.getGallonsReqFactor();
+        const gallonsReqFactor = this.getGallonsReqFactor();
+
+        // Margin =  Current Price * (Location Factor - Rate History Factor + Gallons Requested Factor + Company Profit Factor)
+        const margin = null;
+
+        //calculate suggestedPPG using locationFactor, rateHistoryFactor, gallonsReqFactor, companyProfitFactor, and crudeOilPrice
+        let suggestedPPG = crudeOilPrice * margin;
 
         return suggestedPPG;
     }
 }
+
+export default pricingModule;
 
 
 

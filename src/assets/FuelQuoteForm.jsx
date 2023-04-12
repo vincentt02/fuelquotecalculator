@@ -17,6 +17,31 @@ export default function FuelQuoteForm() {
   const [clientAddress, setClientAddress] = useState(0);
 
   const handleQuote = async () => {
+    // calculate suggested price and total price in the backend
+    const formattedDate = format(dateRequested, "MM/dd/yyyy");
+    try {
+      const response = await fetch("api/fuelquote/suggestedprice", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          gallonsRequested: gallonsRequested,
+          dateRequested: formattedDate,
+          userID: null,
+        })
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setSuggestedPrice(data.suggestedPrice);
+        setAmountDue(gallonsRequested * data.suggestedPrice);
+      }
+    } catch (error) {
+      console.log(error.error);
+    }
+  };
+
+  const handleSubmit = async () => {
     // send user gallons and date first
     const formattedDate = format(dateRequested, "MM/dd/yyyy");
     try {
@@ -34,23 +59,6 @@ export default function FuelQuoteForm() {
       });
       if (response.ok) {
         console.log("POST REQUEST OKAY");
-      }
-    } catch (error) {
-      console.log(error.error);
-    }
-
-    // calculate suggested price and total price in the backend
-    try {
-      const response = await fetch("api/fuelquote/suggestedprice", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setSuggestedPrice(data.suggestedPrice);
-        setAmountDue(gallonsRequested * data.suggestedPrice);
       }
     } catch (error) {
       console.log(error.error);
@@ -146,6 +154,13 @@ export default function FuelQuoteForm() {
           disabled={!dateRequested || !gallonsRequested}
         >
           Get Quote
+        </Button>
+        <Button
+          variant="success"
+          onClick={handleSubmit}
+          disabled={!dateRequested || !gallonsRequested}
+        >
+          Submit
         </Button>
       </Form>
     </div>

@@ -2,6 +2,7 @@ const Yup = require("yup");
 const jwt = require("jsonwebtoken");
 const { clientInformation } = require("../models/clientInformation.js");
 const fuelQuote = require("../models/fuelQuote.js");
+const pricingModule = require("../routes/PricingModule.js");
 
 var userID = null;
 
@@ -49,8 +50,11 @@ const getClientData = async (req, res) => {
 
 const getSuggestedPrice = async (req, res) => {
   // i'll assume this will be completed in the backend,database
-  res.status(200).json({ suggestedPrice: 1.5 });
-  console.log("Suggested Price Calculated!");
+  const pricing = new pricingModule(req.body);
+  const suggestedPrice = pricing.suggestedPrice();
+
+  res.status(200).json({ suggestedPrice: userId });
+  console.log("Suggested Price Calculated!", userId);
 };
 
 const sendToDB = async (req, res) => {
@@ -58,12 +62,15 @@ const sendToDB = async (req, res) => {
   const decoded = jwt.decode(req.body.token)
   const userID2 = decoded.userId;
 
+  const pricing = new pricingModule(numGallons, deliveryAdress, deliveryDate, userID);
+  const suggestedPrice = pricing.suggestedPrice();
+
   const newQuote = fuelQuote({
     numG: req.body.gallonsRequested,
     address: req.body.address,
     date: req.body.dateRequested,
-    price: 1,
-    due: 1,
+    price: suggestedPrice,
+    due: suggestedPrice * req.body.gallonsRequested,
     userID: userID2,
   });
 
