@@ -10,7 +10,7 @@ class pricingModule {
     }
 
     getLocationFactor = async () => {
-        const query = { userID: userID };
+        const query = { userID: this.userID };
         const client = await clientInformation.findOne(query);
         if (client && client.state === "Texas") {
             return 0.02;
@@ -20,7 +20,7 @@ class pricingModule {
     }
 
     getRateHistoryFactor = async () => {
-        const query = { userID: this.userID };
+        const query =  { userID: this.userID };
         const prevQuote = await fuelQuote.findOne(query, {}, { sort: { 'createdAt' : -1 } });
         if (prevQuote) {
             return 0.01;
@@ -35,7 +35,6 @@ class pricingModule {
         return 0.03
     }
     
-
     suggestedPrice = async () => {
         //function that uses the objects parameters to return the suggested price per gallon.
         const companyProfitFactor = 0.10;
@@ -45,16 +44,13 @@ class pricingModule {
         const gallonsReqFactor = this.getGallonsReqFactor();
 
         // Margin =  Current Price * (Location Factor - Rate History Factor + Gallons Requested Factor + Company Profit Factor)
-        const margin = null;
+        const margin = crudeOilPrice * (locationFactor - rateHistoryFactor + gallonsReqFactor);
 
         //calculate suggestedPPG using locationFactor, rateHistoryFactor, gallonsReqFactor, companyProfitFactor, and crudeOilPrice
-        let suggestedPPG = crudeOilPrice * margin;
+        let suggestedPPG = crudeOilPrice + margin;
 
         return suggestedPPG;
     }
 }
 
-export default pricingModule;
-
-
-
+module.exports = pricingModule;
