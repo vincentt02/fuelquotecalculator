@@ -43,23 +43,19 @@ const getClientData = async (req, res) => {
   const query = { userID: userID };
   const data = await clientInformation.findOne(query);
 
-  if(!data?.addressOne) {
-    res.status(422).send("")
+  if(!data?.addressOne || data.addressOne == "") {
+    res.status(422).send(["Client has no address"])
     console.log("No address")
   }
   else {
-  address = data.addressOne;
-  res.status(200).json({ clientAddress: data.addressOne });
+    address = data.addressOne;
+    res.status(200).json({ clientAddress: data.addressOne });
   }
-
 };
 
 const getSuggestedPrice = async (req, res) => {
   // i'll assume this will be completed in the backend,database
-  const decoded = jwt.decode(req.body.token)
-  const userID2 = decoded.userId;
-
-  const pricing = new pricingModule(req.body, userID2);
+  const pricing = new pricingModule(req.body, userID);
   const suggestedPrice = await pricing.suggestedPrice();
 
   res.status(200).json({ suggestedPrice: suggestedPrice });
