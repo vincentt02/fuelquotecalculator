@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button } from "react-bootstrap";
+import { Button, Alert } from "react-bootstrap";
 import { format } from "date-fns";
 import DatePicker from "react-datepicker";
 import Form from "react-bootstrap/Form";
@@ -10,11 +10,13 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { token } from "../assets/Login.jsx";
 
 export default function FuelQuoteForm() {
-  const [gallonsRequested, setGallonsRequested] = useState('');
-  const [dateRequested, setDateRequested] = useState('');
+  const [gallonsRequested, setGallonsRequested] = useState("");
+  const [dateRequested, setDateRequested] = useState("");
   const [suggestedPrice, setSuggestedPrice] = useState(null);
   const [amountDue, setAmountDue] = useState(null);
-  const [clientAddress, setClientAddress] = useState(0);
+  const [clientAddress, setClientAddress] = useState(null);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [showErrorPopup, setShowErrorPopup] = useState(false);
 
   const handleQuote = async () => {
     // calculate suggested price and total price in the backend
@@ -29,7 +31,7 @@ export default function FuelQuoteForm() {
           gallonsRequested: gallonsRequested,
           dateRequested: formattedDate,
           token: token,
-        })
+        }),
       });
       if (response.ok) {
         const data = await response.json();
@@ -60,12 +62,14 @@ export default function FuelQuoteForm() {
       if (response.ok) {
         console.log("POST REQUEST OKAY");
         setGallonsRequested(null); // reset gallonsRequested to blank
-        setDateRequested(""); // reset dateRequested to blank
         setSuggestedPrice(null);
         setAmountDue(null);
+        setDateRequested(""); // reset dateRequested to blank
+        setShowSuccessPopup(true); // show success popup
       }
     } catch (error) {
       console.log(error.error);
+      setShowErrorPopup(true); // show success popup
     }
   };
 
@@ -95,7 +99,7 @@ export default function FuelQuoteForm() {
             "Content-Type": "application/json",
           },
         });
-        if (response.ok) {
+        if (response.status === 200) {
           const data = await response.json();
           setClientAddress(data.clientAddress);
         } else {
@@ -120,8 +124,12 @@ export default function FuelQuoteForm() {
             type="number"
             step="1"
             placeholder="Enter number of gallons requested"
-            value={gallonsRequested ?? ''}
-            onChange={(e) => setGallonsRequested(e.target.value)}
+            value={gallonsRequested ?? ""}
+            onChange={(e) => {
+              setGallonsRequested(e.target.value);
+              setSuggestedPrice(null);
+              setAmountDue(null);
+            }}
           />
         </Form.Group>
 
@@ -145,20 +153,25 @@ export default function FuelQuoteForm() {
           <Form.Label>Suggested Price:</Form.Label>
           <Form.Control
             placeholder="Suggested Price per Gallons"
-            value={suggestedPrice ?? ''}
+            value={suggestedPrice ?? ""}
             readOnly
           />
         </Form.Group>
 
         <Form.Group controlId="amountDue">
           <Form.Label>Total Amount Due:</Form.Label>
-          <Form.Control placeholder="Total Amount Due" value={amountDue ?? ''} readOnly />
+          <Form.Control
+            placeholder="Total Amount Due"
+            value={amountDue ? amountDue.toFixed(2) : ""}
+
+            readOnly
+          />
         </Form.Group>
 
         <Button
           variant="primary"
           onClick={handleQuote}
-          disabled={!dateRequested || !gallonsRequested}
+          disabled={!dateRequested || !gallonsRequested || !clientAddress}
         >
           Get Quote
         </Button>
@@ -169,6 +182,22 @@ export default function FuelQuoteForm() {
         >
           Submit
         </Button>
+        <Alert
+          show={showSuccessPopup}
+          variant="success"
+          onClose={() => setShowSuccessPopup(false)}
+          dismissible
+        >
+          Form submitted successfully!
+        </Alert>
+        <Alert
+          show={showErrorPopup}
+          variant="danger"
+          onClose={() => setShowErrorPopup(false)}
+          dismissible
+        >
+          Error occurred while submitting the form!
+        </Alert>
       </Form>
     </div>
   );

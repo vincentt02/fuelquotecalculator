@@ -12,7 +12,6 @@ class pricingModule {
     getLocationFactor = async () => {
         const query = { userID: this.userID };
         const client = await clientInformation.findOne(query);
-        console.log(client);
         if (client && client.state == "Texas") {
             return 0.02;
         } else {
@@ -23,7 +22,6 @@ class pricingModule {
     getRateHistoryFactor = async () => {
         const query =  { userID: this.userID };
         const prevQuote = await fuelQuote.find(query);
-        // console.log(prevQuote);
         if (prevQuote.length != 0) {
             return 0.01;
         } else {
@@ -46,7 +44,6 @@ class pricingModule {
         const gallonsReqFactor = this.getGallonsReqFactor();
 
         // Margin =  Current Price * (Location Factor - Rate History Factor + Gallons Requested Factor + Company Profit Factor)
-        console.log(crudeOilPrice, "*", "(",locationFactor, "-", rateHistoryFactor, "+", gallonsReqFactor, "+", companyProfitFactor, ")")
         const margin = crudeOilPrice * (locationFactor - rateHistoryFactor + gallonsReqFactor + companyProfitFactor);
 
         //calculate suggestedPPG using locationFactor, rateHistoryFactor, gallonsReqFactor, companyProfitFactor, and crudeOilPrice

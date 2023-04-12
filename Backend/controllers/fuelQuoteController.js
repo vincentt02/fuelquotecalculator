@@ -43,9 +43,15 @@ const getClientData = async (req, res) => {
   const query = { userID: userID };
   const data = await clientInformation.findOne(query);
 
+  if(!data?.addressOne) {
+    res.status(422).send("")
+    console.log("No address")
+  }
+  else {
   address = data.addressOne;
-
   res.status(200).json({ clientAddress: data.addressOne });
+  }
+
 };
 
 const getSuggestedPrice = async (req, res) => {

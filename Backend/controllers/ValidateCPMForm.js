@@ -74,7 +74,6 @@ const formSchema = Yup.object({
   });
 
 const validFormHandler = async (req, res) => {
-  console.log(req.body)
   const decoded = jwt.decode(req.body.token)
   const query = {userID: decoded.userId};
 
@@ -97,13 +96,10 @@ const validateCPMForm = (req, res) => {
       })
       .catch((err) => {
         res.status(422).json(err.errors)
-        console.log(err.errors);
       })
       .then((valid) => {
         if (valid) {
           // res.send({ data: "Form received" });
-          console.log("Valid Form");
-          // console.log(req.body);
           validFormHandler(req, res) 
         }
       });
