@@ -34,13 +34,13 @@ const fuelQuoteSchema = Yup.object({
 
 const getUserID = async (req, res) => {
   const decoded = jwt.decode(req.body.token);
-  userId = decoded.userId;
+  userID = decoded.userId;
   res.status(200).send({ data: "userID decoded" });
 };
 
 const getClientData = async (req, res) => {
   // extract client profile data address
-  const query = { userID: userId };
+  const query = { userID: userID };
   const data = await clientInformation.findOne(query);
 
   address = data.addressOne;
@@ -50,7 +50,10 @@ const getClientData = async (req, res) => {
 
 const getSuggestedPrice = async (req, res) => {
   // i'll assume this will be completed in the backend,database
-  const pricing = new pricingModule(req.body);
+  const decoded = jwt.decode(req.body.token)
+  const userID2 = decoded.userId;
+
+  const pricing = new pricingModule(req.body, userID2);
   const suggestedPrice = await pricing.suggestedPrice();
 
   res.status(200).json({ suggestedPrice: suggestedPrice });
@@ -62,8 +65,9 @@ const sendToDB = async (req, res) => {
   const decoded = jwt.decode(req.body.token)
   const userID2 = decoded.userId;
 
-  const pricing = new pricingModule(numGallons, deliveryAdress, deliveryDate, userID);
-  const suggestedPrice = pricing.suggestedPrice();
+  const pricing = new pricingModule(req.body, userID2);
+  var suggestedPrice = await pricing.suggestedPrice();
+  console.log("does it make it here?", suggestedPrice)
 
   const newQuote = fuelQuote({
     numG: req.body.gallonsRequested,
@@ -92,6 +96,7 @@ const submitFuelQuote = (req, res) => {
       sendToDB(req, res);
     })
     .catch((err) => {
+      console.log('FIND ME IT JUST ERRORS UR SHIT BURH')
       console.log(err.errors);
       res.status(422).send(err.errors);
     });

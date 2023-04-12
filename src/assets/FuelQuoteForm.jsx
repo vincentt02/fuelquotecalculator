@@ -28,7 +28,7 @@ export default function FuelQuoteForm() {
         body: JSON.stringify({
           gallonsRequested: gallonsRequested,
           dateRequested: formattedDate,
-          userID: null,
+          token: token,
         })
       });
       if (response.ok) {

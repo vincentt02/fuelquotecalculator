@@ -3,16 +3,17 @@ const fuelQuote = require("../models/fuelQuote.js");
 
 class pricingModule {
 
-    constructor(req) {
+    constructor(req, userID) {
         this.suggestedPPG = null;
-        this.userID = req.userID;
+        this.userID = userID;
         this.gallonsRequested = req.gallonsRequested;
     }
 
     getLocationFactor = async () => {
         const query = { userID: this.userID };
         const client = await clientInformation.findOne(query);
-        if (client && client.state === "Texas") {
+        console.log(client);
+        if (client && client.state == "Texas") {
             return 0.02;
         } else {
             return 0.04;
@@ -21,8 +22,9 @@ class pricingModule {
 
     getRateHistoryFactor = async () => {
         const query =  { userID: this.userID };
-        const prevQuote = await fuelQuote.findOne(query, {}, { sort: { 'createdAt' : -1 } });
-        if (prevQuote) {
+        const prevQuote = await fuelQuote.find(query);
+        // console.log(prevQuote);
+        if (prevQuote.length != 0) {
             return 0.01;
         } else {
             return 0.0;
@@ -40,11 +42,12 @@ class pricingModule {
         const companyProfitFactor = 0.10;
         const crudeOilPrice = 1.50; 
         const locationFactor = await this.getLocationFactor();
-        const rateHistoryFactor = await this.getGallonsReqFactor();
+        const rateHistoryFactor = await this.getRateHistoryFactor();
         const gallonsReqFactor = this.getGallonsReqFactor();
 
         // Margin =  Current Price * (Location Factor - Rate History Factor + Gallons Requested Factor + Company Profit Factor)
-        const margin = crudeOilPrice * (locationFactor - rateHistoryFactor + gallonsReqFactor);
+        console.log(crudeOilPrice, "*", "(",locationFactor, "-", rateHistoryFactor, "+", gallonsReqFactor, "+", companyProfitFactor, ")")
+        const margin = crudeOilPrice * (locationFactor - rateHistoryFactor + gallonsReqFactor + companyProfitFactor);
 
         //calculate suggestedPPG using locationFactor, rateHistoryFactor, gallonsReqFactor, companyProfitFactor, and crudeOilPrice
         let suggestedPPG = crudeOilPrice + margin;
