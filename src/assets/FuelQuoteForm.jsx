@@ -10,10 +10,10 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { token } from "../assets/Login.jsx";
 
 export default function FuelQuoteForm() {
-  const [gallonsRequested, setGallonsRequested] = useState(0);
-  const [dateRequested, setDateRequested] = useState(0);
-  const [suggestedPrice, setSuggestedPrice] = useState(0);
-  const [amountDue, setAmountDue] = useState(0);
+  const [gallonsRequested, setGallonsRequested] = useState('');
+  const [dateRequested, setDateRequested] = useState('');
+  const [suggestedPrice, setSuggestedPrice] = useState(null);
+  const [amountDue, setAmountDue] = useState(null);
   const [clientAddress, setClientAddress] = useState(0);
 
   const handleQuote = async () => {
@@ -59,6 +59,10 @@ export default function FuelQuoteForm() {
       });
       if (response.ok) {
         console.log("POST REQUEST OKAY");
+        setGallonsRequested(null); // reset gallonsRequested to blank
+        setDateRequested(""); // reset dateRequested to blank
+        setSuggestedPrice(null);
+        setAmountDue(null);
       }
     } catch (error) {
       console.log(error.error);
@@ -113,7 +117,10 @@ export default function FuelQuoteForm() {
         <Form.Group controlId="gallonsRequested">
           <Form.Label>Gallons Requested:</Form.Label>
           <Form.Control
+            type="number"
+            step="1"
             placeholder="Enter number of gallons requested"
+            value={gallonsRequested ?? ''}
             onChange={(e) => setGallonsRequested(e.target.value)}
           />
         </Form.Group>
@@ -137,15 +144,15 @@ export default function FuelQuoteForm() {
         <Form.Group controlId="suggestedPrice">
           <Form.Label>Suggested Price:</Form.Label>
           <Form.Control
-            placeholder="Suggested price"
-            value={suggestedPrice}
+            placeholder="Suggested Price per Gallons"
+            value={suggestedPrice ?? ''}
             readOnly
           />
         </Form.Group>
 
         <Form.Group controlId="amountDue">
           <Form.Label>Total Amount Due:</Form.Label>
-          <Form.Control placeholder="Total due" value={amountDue} readOnly />
+          <Form.Control placeholder="Total Amount Due" value={amountDue ?? ''} readOnly />
         </Form.Group>
 
         <Button
@@ -158,7 +165,7 @@ export default function FuelQuoteForm() {
         <Button
           variant="success"
           onClick={handleSubmit}
-          disabled={!dateRequested || !gallonsRequested}
+          disabled={!dateRequested || !gallonsRequested || !suggestedPrice}
         >
           Submit
         </Button>
