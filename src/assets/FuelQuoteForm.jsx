@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button } from "react-bootstrap";
+import { Button, Alert } from "react-bootstrap";
 import { format } from "date-fns";
 import DatePicker from "react-datepicker";
 import Form from "react-bootstrap/Form";
@@ -10,13 +10,40 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { token } from "../assets/Login.jsx";
 
 export default function FuelQuoteForm() {
-  const [gallonsRequested, setGallonsRequested] = useState(0);
-  const [dateRequested, setDateRequested] = useState(0);
-  const [suggestedPrice, setSuggestedPrice] = useState(0);
-  const [amountDue, setAmountDue] = useState(0);
-  const [clientAddress, setClientAddress] = useState(0);
+  const [gallonsRequested, setGallonsRequested] = useState("");
+  const [dateRequested, setDateRequested] = useState("");
+  const [suggestedPrice, setSuggestedPrice] = useState(null);
+  const [amountDue, setAmountDue] = useState(null);
+  const [clientAddress, setClientAddress] = useState(null);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [showErrorPopup, setShowErrorPopup] = useState(false);
 
   const handleQuote = async () => {
+    // calculate suggested price and total price in the backend
+    const formattedDate = format(dateRequested, "MM/dd/yyyy");
+    try {
+      const response = await fetch("api/fuelquote/suggestedprice", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          gallonsRequested: gallonsRequested,
+          dateRequested: formattedDate,
+          token: token,
+        }),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setSuggestedPrice(data.suggestedPrice);
+        setAmountDue(gallonsRequested * data.suggestedPrice);
+      }
+    } catch (error) {
+      console.log(error.error);
+    }
+  };
+
+  const handleSubmit = async () => {
     // send user gallons and date first
     const formattedDate = format(dateRequested, "MM/dd/yyyy");
     try {
@@ -34,26 +61,15 @@ export default function FuelQuoteForm() {
       });
       if (response.ok) {
         console.log("POST REQUEST OKAY");
+        setGallonsRequested(null); // reset gallonsRequested to blank
+        setSuggestedPrice(null);
+        setAmountDue(null);
+        setDateRequested(""); // reset dateRequested to blank
+        setShowSuccessPopup(true); // show success popup
       }
     } catch (error) {
       console.log(error.error);
-    }
-
-    // calculate suggested price and total price in the backend
-    try {
-      const response = await fetch("api/fuelquote/suggestedprice", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setSuggestedPrice(data.suggestedPrice);
-        setAmountDue(gallonsRequested * data.suggestedPrice);
-      }
-    } catch (error) {
-      console.log(error.error);
+      setShowErrorPopup(true); // show success popup
     }
   };
 
@@ -83,7 +99,7 @@ export default function FuelQuoteForm() {
             "Content-Type": "application/json",
           },
         });
-        if (response.ok) {
+        if (response.status === 200) {
           const data = await response.json();
           setClientAddress(data.clientAddress);
         } else {
@@ -105,8 +121,15 @@ export default function FuelQuoteForm() {
         <Form.Group controlId="gallonsRequested">
           <Form.Label>Gallons Requested:</Form.Label>
           <Form.Control
+            type="number"
+            step="1"
             placeholder="Enter number of gallons requested"
-            onChange={(e) => setGallonsRequested(e.target.value)}
+            value={gallonsRequested ?? ""}
+            onChange={(e) => {
+              setGallonsRequested(e.target.value);
+              setSuggestedPrice(null);
+              setAmountDue(null);
+            }}
           />
         </Form.Group>
 
@@ -129,24 +152,52 @@ export default function FuelQuoteForm() {
         <Form.Group controlId="suggestedPrice">
           <Form.Label>Suggested Price:</Form.Label>
           <Form.Control
-            placeholder="Suggested price"
-            value={suggestedPrice}
+            placeholder="Suggested Price per Gallons"
+            value={suggestedPrice ?? ""}
             readOnly
           />
         </Form.Group>
 
         <Form.Group controlId="amountDue">
           <Form.Label>Total Amount Due:</Form.Label>
-          <Form.Control placeholder="Total due" value={amountDue} readOnly />
+          <Form.Control
+            placeholder="Total Amount Due"
+            value={amountDue ? amountDue.toFixed(2) : ""}
+
+            readOnly
+          />
         </Form.Group>
 
         <Button
           variant="primary"
           onClick={handleQuote}
-          disabled={!dateRequested || !gallonsRequested}
+          disabled={!dateRequested || !gallonsRequested || !clientAddress}
         >
           Get Quote
         </Button>
+        <Button
+          variant="success"
+          onClick={handleSubmit}
+          disabled={!dateRequested || !gallonsRequested || !suggestedPrice}
+        >
+          Submit
+        </Button>
+        <Alert
+          show={showSuccessPopup}
+          variant="success"
+          onClose={() => setShowSuccessPopup(false)}
+          dismissible
+        >
+          Form submitted successfully!
+        </Alert>
+        <Alert
+          show={showErrorPopup}
+          variant="danger"
+          onClose={() => setShowErrorPopup(false)}
+          dismissible
+        >
+          Error occurred while submitting the form!
+        </Alert>
       </Form>
     </div>
   );

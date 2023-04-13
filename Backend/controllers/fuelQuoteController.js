@@ -2,6 +2,7 @@ const Yup = require("yup");
 const jwt = require("jsonwebtoken");
 const { clientInformation } = require("../models/clientInformation.js");
 const fuelQuote = require("../models/fuelQuote.js");
+const pricingModule = require("../routes/PricingModule.js")
 
 var userID = null;
 
@@ -33,24 +34,32 @@ const fuelQuoteSchema = Yup.object({
 
 const getUserID = async (req, res) => {
   const decoded = jwt.decode(req.body.token);
-  userId = decoded.userId;
+  userID = decoded.userId;
   res.status(200).send({ data: "userID decoded" });
 };
 
 const getClientData = async (req, res) => {
   // extract client profile data address
-  const query = { userID: userId };
+  const query = { userID: userID };
   const data = await clientInformation.findOne(query);
 
-  address = data.addressOne;
-
-  res.status(200).json({ clientAddress: data.addressOne });
+  if(!data?.addressOne || data.addressOne == "") {
+    res.status(422).send(["Client has no address"])
+    console.log("No address")
+  }
+  else {
+    address = data.addressOne;
+    res.status(200).json({ clientAddress: data.addressOne });
+  }
 };
 
 const getSuggestedPrice = async (req, res) => {
   // i'll assume this will be completed in the backend,database
-  res.status(200).json({ suggestedPrice: 1.5 });
-  console.log("Suggested Price Calculated!");
+  const pricing = new pricingModule(req.body, userID);
+  const suggestedPrice = await pricing.suggestedPrice();
+
+  res.status(200).json({ suggestedPrice: suggestedPrice });
+  console.log("Suggested Price Calculated!", suggestedPrice);
 };
 
 const sendToDB = async (req, res) => {
@@ -58,12 +67,15 @@ const sendToDB = async (req, res) => {
   const decoded = jwt.decode(req.body.token)
   const userID2 = decoded.userId;
 
+  const pricing = new pricingModule(req.body, userID2);
+  var suggestedPrice = await pricing.suggestedPrice();
+
   const newQuote = fuelQuote({
     numG: req.body.gallonsRequested,
     address: req.body.address,
     date: req.body.dateRequested,
-    price: 1,
-    due: 1,
+    price: suggestedPrice,
+    due: suggestedPrice * req.body.gallonsRequested,
     userID: userID2,
   });
 
@@ -81,11 +93,9 @@ const submitFuelQuote = (req, res) => {
     .then((valid) => {
       // res.status(200).send({ data: "form received" });
       console.log("Valid Form");
-      console.log(req.body);
       sendToDB(req, res);
     })
     .catch((err) => {
-      console.log(err.errors);
       res.status(422).send(err.errors);
     });
 };

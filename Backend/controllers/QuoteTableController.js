@@ -68,7 +68,6 @@ const getQuoteData = async (req, res) => {
   const validQuotes = await filterValidQuotes(allData);
 
   res.status(200).json(validQuotes);
-  console.log("Valid quotes extracted!");
 };
 
 module.exports = {
