@@ -6,8 +6,11 @@ import Form from "react-bootstrap/Form";
 import "../css/FuelQuoteForm.css";
 import "react-datepicker/dist/react-datepicker.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-
+import { Navigate } from "react-router-dom"
 import { token } from "../assets/Login.jsx";
+import hasClientInformation from "./hasClientInformation";
+
+const clientInformation = false;
 
 export default function FuelQuoteForm() {
   const [gallonsRequested, setGallonsRequested] = useState("");
@@ -17,6 +20,7 @@ export default function FuelQuoteForm() {
   const [clientAddress, setClientAddress] = useState(null);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [showErrorPopup, setShowErrorPopup] = useState(false);
+  const [clientInformation, setClientInformation] = useState(null)
 
   const handleQuote = async () => {
     // calculate suggested price and total price in the backend
@@ -74,6 +78,7 @@ export default function FuelQuoteForm() {
   };
 
   useEffect(() => {
+    setClientInformation(hasClientInformation(token));
     const sendClientToken = async () => {
       try {
         const response = await fetch("api/fuelquote/token", {
@@ -113,6 +118,11 @@ export default function FuelQuoteForm() {
     sendClientToken();
     getClientAddress();
   }, []);
+
+  if(!clientInformation)
+  {
+    return (<Navigate to="/clientinformation" />)
+  }
 
   return (
     <div className="FuelQuoteForm_wrapper">

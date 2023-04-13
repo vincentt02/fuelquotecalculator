@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import "../css/ClientProfileManagement.css";
 
 import Button from "react-bootstrap/Button";
@@ -7,7 +7,10 @@ import Alert from "react-bootstrap/Alert";
 
 import { token } from "../assets/Login.jsx"
 
+
 export default function ClientProfileManagement() {
+
+
   const stateOptions = [
     "Alabama",
     "Alaska",

@@ -1,14 +1,20 @@
 import Table from "react-bootstrap/Table";
 import React, { useState, useEffect } from "react";
-
+import { Navigate } from "react-router-dom"
 import { token } from "../assets/Login";
+
+import hasClientInformation from "./hasClientInformation";
+
+
 
 export default function QuoteTable() {
   const [quoteData, setQuoteData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [clientInformation, setClientInformation] = useState(null)
 
   useEffect(() => {
+    setClientInformation(hasClientInformation(token));
     const sendClientToken = async () => {
       try {
         const response = await fetch("/api/quotetable/quotedata", {
@@ -51,6 +57,11 @@ export default function QuoteTable() {
     getQuoteData();
   }, []);
 
+  if(!clientInformation)
+  {
+    return (<Navigate to="/clientinformation" />)
+  } 
+  
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -58,6 +69,8 @@ export default function QuoteTable() {
   if (error) {
     return <div>{error}</div>;
   }
+
+
 
   return (
     <Table striped bordered hover>
