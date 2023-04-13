@@ -6,8 +6,10 @@ import Form from "react-bootstrap/Form";
 import "../css/FuelQuoteForm.css";
 import "react-datepicker/dist/react-datepicker.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-
+import { useNavigate } from "react-router-dom"
 import { token } from "../assets/Login.jsx";
+import hasClientInformation from "./hasClientInformation";
+
 
 export default function FuelQuoteForm() {
   const [gallonsRequested, setGallonsRequested] = useState("");
@@ -17,8 +19,13 @@ export default function FuelQuoteForm() {
   const [clientAddress, setClientAddress] = useState(null);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [showErrorPopup, setShowErrorPopup] = useState(false);
+  const [clientInformation, setClientInformation] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
 
   const handleQuote = async () => {
+    
     // calculate suggested price and total price in the backend
     const formattedDate = format(dateRequested, "MM/dd/yyyy");
     try {
@@ -74,6 +81,18 @@ export default function FuelQuoteForm() {
   };
 
   useEffect(() => {
+    //function call to check if the user has clientinformation in the database
+    const checkClientInformation = async () => {
+      try {
+        const data = await hasClientInformation(token);
+        setClientInformation(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    checkClientInformation();
+
     const sendClientToken = async () => {
       try {
         const response = await fetch("api/fuelquote/token", {
@@ -102,8 +121,9 @@ export default function FuelQuoteForm() {
         if (response.status === 200) {
           const data = await response.json();
           setClientAddress(data.clientAddress);
+          setLoading(false)
         } else {
-          console.log("bruh");
+          // console.log("no client address");
         }
       } catch (error) {
         console.log(error.error);
@@ -113,6 +133,26 @@ export default function FuelQuoteForm() {
     sendClientToken();
     getClientAddress();
   }, []);
+
+  //Redirect the user to the client profile management form if no clientinformation is found
+  useEffect(() => {
+    if (clientInformation === false) 
+    {
+      navigate("/clientinformation");
+    }
+  }, [clientInformation, navigate]);
+
+  // useEffect(() => {
+  //   if(clientAddress !== null)
+  //   {
+      
+  //   }
+  // }, [clientAddress])
+
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="FuelQuoteForm_wrapper">
@@ -163,7 +203,6 @@ export default function FuelQuoteForm() {
           <Form.Control
             placeholder="Total Amount Due"
             value={amountDue ? amountDue.toFixed(2) : ""}
-
             readOnly
           />
         </Form.Group>

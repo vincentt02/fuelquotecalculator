@@ -94,7 +94,6 @@ const login = (req, res, next) => {
               process.env.JWT_KEY, //must include in env file in current environment
               { expiresIn: '1h' }
             );
-
             return res.status(200).json({ message: 'Authentication successful.', token: token });
           }
   
