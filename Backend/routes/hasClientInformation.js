@@ -10,16 +10,14 @@ const checkForClientInformation = async (req, res) => {
 
     const query = { userID: userID };
     const data = await clientInformation.findOne(query);
-
-    console.log(data)
   
     if(data === null) {
       res.status(200).send(false)
-      console.log("No client information")
+      // console.log("No client information")
     }
     else {
         res.status(200).send(true)
-      console.log("Has client information")
+      // console.log("Has client information")
     }
   };
 

@@ -11,8 +11,7 @@ const hasClientInformation = async (token) => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data)
-        return (data)
+        return data
       } else {
       }
     } catch (error) {}

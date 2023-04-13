@@ -1,6 +1,6 @@
 import Table from "react-bootstrap/Table";
 import React, { useState, useEffect } from "react";
-import { Navigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { token } from "../assets/Login";
 
 import hasClientInformation from "./hasClientInformation";
@@ -13,8 +13,21 @@ export default function QuoteTable() {
   const [error, setError] = useState(null);
   const [clientInformation, setClientInformation] = useState(null)
 
+  const navigate = useNavigate();
+
   useEffect(() => {
-    setClientInformation(hasClientInformation(token));
+    //function call to check if the user has clientinformation in the database
+    const checkClientInformation = async () => {
+      try {
+        const data = await hasClientInformation(token);
+        setClientInformation(data)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    checkClientInformation()
+    
     const sendClientToken = async () => {
       try {
         const response = await fetch("/api/quotetable/quotedata", {
@@ -57,10 +70,12 @@ export default function QuoteTable() {
     getQuoteData();
   }, []);
 
-  if(!clientInformation)
-  {
-    return (<Navigate to="/clientinformation" />)
-  } 
+  //Redirect the user to the client profile management form if no clientinformation is found
+  useEffect(() => {
+    if(clientInformation === false)
+    navigate("/clientinformation")
+  }, [clientInformation, navigate])
+
   
   if (loading) {
     return <div>Loading...</div>;
@@ -69,8 +84,6 @@ export default function QuoteTable() {
   if (error) {
     return <div>{error}</div>;
   }
-
-
 
   return (
     <Table striped bordered hover>
