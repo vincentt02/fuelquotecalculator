@@ -7,8 +7,10 @@ import { token } from "../assets/Login.jsx";
 import hasClientInformation from "./hasClientInformation";
 
 export default function Homepage() {
-  const [clientInformation, setClientInformation] = useState(null)
+  const [clientInformationData, setClientInformationData] = useState(null);
+  const [clientInformation, setClientInformation] = useState(null);
   const [loading, setLoading] = useState(true);
+  
 
   const navigate = useNavigate();
 
@@ -18,13 +20,35 @@ export default function Homepage() {
       try {
         const data = await hasClientInformation(token);
         setClientInformation(data)
-        setLoading(false)
       } catch (error) {
         console.error(error)
       }
     }
 
+    const getClientInformation = async () => {
+        try {
+          const response = await fetch("/api/getClientInformation", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ token: token }),
+          });
+          if (response.status === 200) {
+            const data = await response.json();
+            // console.log(data)
+            setClientInformationData(data)
+            setLoading(false)
+          } else {
+
+          }
+        } catch (error) {
+          console.log(error.error);
+        }
+      };
+
     checkClientInformation()
+    getClientInformation()
   }, [])
 
   //Redirect the user to the client profile management form if no clientinformation is found
@@ -42,7 +66,17 @@ export default function Homepage() {
 
   return (
     <div className="Homepage_container">
-      <h1>Home page</h1>
+      <div className="welcome_container">Welcome, { clientInformationData.fullName }</div>
+      <div className="clientInformation_display">
+        <h3> Current Client Information</h3>
+        <p>Full Name: { clientInformationData.fullName }</p>
+        <p>Address 1: { clientInformationData.addressOne }</p>
+        <p>Address 2: { clientInformationData.addressTwo }</p>
+        <p>City: { clientInformationData.city }</p>
+        <p>State: { clientInformationData.state }</p>
+        <p>Zipcode: { clientInformationData.zipcode }</p>
+      </div>
+      
     </div>
   );
 }
