@@ -10,6 +10,7 @@ const quoteTable = require('./routes/QuoteTableModule')
 const LoginModuleRoute = require("./routes/LoginModule")
 const registerRoute = require('./routes/Register')
 const hasClientInformation = require('./routes/hasClientInformation')
+const getClientInformation = require('./routes/getClientInformation')
 
 //connect to the database
 mongoose.connect(process.env.DATABASE_URI).catch(error => console.log(error));
@@ -23,7 +24,8 @@ app.use(express.urlencoded({extended: false}));
 
 app.use("/api/clientprofilemanagement", ClientProfileManagementRoute);
 app.use("/api/clientprofilemanagement/hci", hasClientInformation);
-app.use('/api', fuelQuote, quoteTable)
+app.use("/api/getClientInformation", getClientInformation);
+app.use('/api', fuelQuote, quoteTable);
 app.use("/Login", LoginModuleRoute);
 app.use('/Register', registerRoute);
 
