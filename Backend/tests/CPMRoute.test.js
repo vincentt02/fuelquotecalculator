@@ -116,6 +116,7 @@ describe("POST /api/clientprofilemanagement", () => {
       expect(response.status).toBe(422);
       expect(response.body).toEqual([
         "Address 1 Required",
+        "Invalid address format",
       ])
     });
   });
@@ -124,7 +125,7 @@ describe("POST /api/clientprofilemanagement", () => {
     //the form is invalid because addressOne is too long
     const invalidFormExample = {
       fullName: "John Smith",
-      addressOne: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      addressOne: "123 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa st",
       addressTwo: "",
       city: "Houston",
       state: "Texas",
