@@ -96,11 +96,11 @@ export default function ClientProfileManagement() {
         setErrorAlert(false);
       } else {
         const errorData = await response.json();
-        setErrorAlert(errorData.error);
+        console.log(errorData)
+        setErrorAlert(errorData)
       }
     } catch (error) {
       console.error(error);
-      setErrorAlert("An error occurred while submitting the form.");
     }
   };
 
@@ -113,7 +113,7 @@ export default function ClientProfileManagement() {
         style={{ position: "fixed", top: 600, zIndex: 999 }}
         dismissible
       >
-        Error submitting form! Please check input fields.
+        Error submitting form! {errorAlert}
       </Alert>
       <Alert
         show={successAlert}
@@ -155,7 +155,7 @@ export default function ClientProfileManagement() {
           <Form.Control
             type="text"
             name="addressTwo"
-            placeholder="Ex: 123 Main St"
+            placeholder="Enter address 2"
             onChange={handleInputChange}
             maxLength={100}
           />
