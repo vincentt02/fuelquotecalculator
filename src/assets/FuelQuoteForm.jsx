@@ -211,14 +211,14 @@ export default function FuelQuoteForm() {
         <Button
           variant="primary"
           onClick={handleQuote}
-          disabled={!dateRequested || !gallonsRequested || !clientAddress}
+          disabled={(!dateRequested || !gallonsRequested || !clientAddress || gallonsRequested <= 0)}
         >
           Get Quote
         </Button>
         <Button
           variant="success"
           onClick={handleSubmit}
-          disabled={!dateRequested || !gallonsRequested || !suggestedPrice}
+          disabled={(!dateRequested || !gallonsRequested || !suggestedPrice || gallonsRequested <= 0)}
         >
           Submit
         </Button>

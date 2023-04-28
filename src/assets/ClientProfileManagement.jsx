@@ -1,16 +1,13 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import "../css/ClientProfileManagement.css";
 
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Alert from "react-bootstrap/Alert";
 
-import { token } from "../assets/Login.jsx"
-
+import { token } from "../assets/Login.jsx";
 
 export default function ClientProfileManagement() {
-
-
   const stateOptions = [
     "Alabama",
     "Alaska",
@@ -64,47 +61,71 @@ export default function ClientProfileManagement() {
     "Wyoming",
   ];
 
-  const [formData, setFormData] = useState({fullName: "", addressOne: "", addressTwo: "", city: "", state: "Alabama", zipcode: "", token: token});
+  const [formData, setFormData] = useState({
+    fullName: "",
+    addressOne: "",
+    addressTwo: "",
+    city: "",
+    state: "Alabama",
+    zipcode: "",
+    token: token,
+  });
   const [successAlert, setSuccessAlert] = useState(false);
+  const [errorAlert, setErrorAlert] = useState(false);
 
   const handleInputChange = (e) => {
-    const {name, value} = e.target;
-    setFormData({...formData, [name]: value})
-  }
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
   const submitHandler = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     try {
       const response = await fetch("/api/clientprofilemanagement", {
         method: "POST",
         headers: {
-          "Content-Type" : "application/json",
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
 
-      if(response.ok) {
-        console.log("successful")
+      if (response.ok) {
+        console.log("successful");
         setSuccessAlert(true);
+        setErrorAlert(false);
       } else {
-
-      } 
+        const errorData = await response.json();
+        setErrorAlert(errorData.error);
+      }
     } catch (error) {
-
+      console.error(error);
+      setErrorAlert("An error occurred while submitting the form.");
     }
-  }
+  };
 
   return (
     <div className="ClientProfileManagement_wrapper">
-      <Alert show={successAlert} variant="success" onClose={() => setSuccessAlert(false)}   style={{ position: 'fixed', top:600, zIndex: 999 }} dismissible>
+      <Alert
+        show={errorAlert}
+        variant="danger"
+        onClose={() => setErrorAlert(false)}
+        style={{ position: "fixed", top: 600, zIndex: 999 }}
+        dismissible
+      >
+        Error submitting form! Please check input fields.
+      </Alert>
+      <Alert
+        show={successAlert}
+        variant="success"
+        onClose={() => setSuccessAlert(false)}
+        style={{ position: "fixed", top: 600, zIndex: 999 }}
+        dismissible
+      >
         Form submitted successfully!
       </Alert>
       <h2>Client Profile Management</h2>
-      <Form
-        id="clientProfileManagement"
-        onSubmit={submitHandler}
-      >
+      <Form id="clientProfileManagement" onSubmit={submitHandler}>
         <Form.Group className="mb-3" controlId="formFullName">
           <Form.Label>Full Name:</Form.Label>
           <Form.Control
@@ -134,7 +155,7 @@ export default function ClientProfileManagement() {
           <Form.Control
             type="text"
             name="addressTwo"
-            placeholder="Enter address 2"
+            placeholder="Ex: 123 Main St"
             onChange={handleInputChange}
             maxLength={100}
           />
@@ -180,10 +201,6 @@ export default function ClientProfileManagement() {
         <Button variant="primary" type="submit">
           Submit
         </Button>
-
-      
-        
-
       </Form>
     </div>
   );
