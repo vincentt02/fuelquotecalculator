@@ -62,7 +62,8 @@ const formSchema = Yup.object({
       .max(50, "Full Name too long"),
     addressOne: Yup.string()
       .required("Address 1 Required")
-      .max(100, "Address 1 too long"),
+      .max(100, "Address 1 too long")
+      .matches(/^\d+\s+\S.*$/, "Invalid address format"),
     addressTwo: Yup.string().max(100, "Address 2 too long"),
     city: Yup.string().required("City Required").max(100, "City too long"),
     state: Yup.string().required("State Required").oneOf(stateOptions, "Invalid State"),

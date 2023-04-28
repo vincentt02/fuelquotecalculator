@@ -182,6 +182,7 @@ export default function FuelQuoteForm() {
           <Form.Label>Delivery Date:</Form.Label>
           <DatePicker
             dateFormat="MM/dd/yyyy"
+            minDate={new Date()}
             selected={dateRequested}
             onChange={(date) => {
               setDateRequested(date);
